@@ -17,7 +17,9 @@ import {
   Col,
   Select,
   Radio,
-  message
+  message,
+  Tabs,
+  Switch
 } from 'antd';
 import {
   UploadOutlined,
@@ -28,15 +30,20 @@ import {
   PlayCircleOutlined,
   DownloadOutlined,
   PauseCircleOutlined,
-  ReloadOutlined
+  ReloadOutlined,
+  ScissorOutlined,
+  RobotOutlined,
+  ThunderboltOutlined,
+  ClockCircleOutlined
 } from '@ant-design/icons';
-import { useWorkflow, useModel } from '@/core/hooks';
+import { useWorkflow, useModel, useAIClip } from '@/core/hooks';
 import { scriptTemplateService } from '@/core/services';
 import { VideoUploader } from '@/components/VideoUploader';
 import { ModelSelector } from '@/components/ModelSelector';
 import { ScriptEditor } from '@/components/ScriptEditor';
 import { VideoTimeline } from '@/components/VideoTimeline';
 import { ExportPanel } from '@/components/ExportPanel';
+import { AIClipAssistant } from '@/components/AIClipAssistant';
 import type { WorkflowStep, ScriptTemplate, AIModel } from '@/core/types';
 
 import styles from './index.module.less';
@@ -147,6 +154,14 @@ export const WorkflowPage: React.FC = () => {
     }
   });
 
+  // AI 剪辑 Hook
+  const {
+    isAnalyzing: isClipAnalyzing,
+    result: clipResult,
+    analyze: analyzeClip,
+    smartClip
+  } = useAIClip();
+
   // 本地状态
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<ScriptTemplate | null>(null);
@@ -157,6 +172,17 @@ export const WorkflowPage: React.FC = () => {
     length: 'medium' as const,
     targetAudience: 'general',
     language: 'zh' as const
+  });
+
+  // AI 剪辑配置
+  const [aiClipConfig, setAiClipConfig] = useState({
+    enabled: true,
+    autoClip: false,
+    detectSceneChange: true,
+    detectSilence: true,
+    removeSilence: true,
+    targetDuration: undefined as number | undefined,
+    pacingStyle: 'normal' as 'fast' | 'normal' | 'slow'
   });
 
   // 模型列表
@@ -182,12 +208,13 @@ export const WorkflowPage: React.FC = () => {
         autoGenerateScript: true,
         preferredTemplate: selectedTemplate?.id,
         model: selectedModel,
-        scriptParams
+        scriptParams,
+        aiClipConfig: aiClipConfig.enabled ? aiClipConfig : undefined
       });
     } catch (err) {
       // 错误已在回调中处理
     }
-  }, [selectedFile, selectedModel, selectedTemplate, scriptParams, start]);
+  }, [selectedFile, selectedModel, selectedTemplate, scriptParams, aiClipConfig, start]);
 
   // 渲染步骤内容
   const renderStepContent = () => {
@@ -501,6 +528,25 @@ export const WorkflowPage: React.FC = () => {
                 onSave={editScript}
                 scenes={data.videoAnalysis?.scenes}
               />
+            )}
+          </Card>
+        );
+
+      case 'ai-clip':
+        return (
+          <Card title="AI 智能剪辑" className={styles.stepCard}>
+            {data.videoInfo ? (
+              <AIClipAssistant
+                videoInfo={data.videoInfo}
+                onAnalysisComplete={(result) => {
+                  console.log('AI 剪辑分析完成:', result);
+                }}
+                onApplySuggestions={(segments) => {
+                  console.log('应用剪辑建议:', segments);
+                }}
+              />
+            ) : (
+              <Alert message="请先上传视频" type="warning" />
             )}
           </Card>
         );

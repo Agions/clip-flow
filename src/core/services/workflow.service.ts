@@ -10,6 +10,7 @@ import { uniquenessService } from './uniqueness.service';
 import { aiService } from './ai.service';
 import { videoService } from './video.service';
 import { storageService } from './storage.service';
+import { aiClipService, type AIClipConfig } from './aiClip.service';
 import type {
   VideoInfo,
   VideoAnalysis,
@@ -119,6 +120,16 @@ export interface WorkflowConfig {
     autoRewrite: boolean;
     similarityThreshold: number;
     addRandomness: boolean;
+  };
+  // AI 剪辑配置
+  aiClipConfig?: {
+    enabled: boolean;
+    autoClip: boolean;
+    detectSceneChange: boolean;
+    detectSilence: boolean;
+    removeSilence: boolean;
+    targetDuration?: number;
+    pacingStyle: 'fast' | 'normal' | 'slow';
   };
 }
 
@@ -251,13 +262,18 @@ class WorkflowService {
       // Step 7: 编辑脚本
       this.updateState({ step: 'script-edit', progress: 60 });
 
-      // Step 8: 时间轴编辑
+      // Step 8: AI 智能剪辑（如果启用）
+      if (config.aiClipConfig?.enabled) {
+        await this.stepAIClip(config.aiClipConfig);
+      }
+
+      // Step 9: 时间轴编辑
       await this.stepTimelineEdit();
 
-      // Step 7: 预览
+      // Step 10: 预览
       this.updateState({ step: 'preview', progress: 90 });
 
-      // Step 8: 导出
+      // Step 11: 导出
       this.updateState({ step: 'export', progress: 100, status: 'completed' });
 
       this.callbacks.onComplete?.(this.state.data);
@@ -624,6 +640,53 @@ ${section.tips?.map((tip: string) => `- ${tip}`).join('\n')}
       isUnique: result.isUnique,
       attempts: result.attempts
     };
+  }
+
+  /**
+   * AI 智能剪辑步骤
+   */
+  async stepAIClip(aiClipConfig: WorkflowConfig['aiClipConfig']): Promise<void> {
+    if (!aiClipConfig?.enabled) return;
+
+    this.updateState({ progress: 62 });
+
+    const { videoInfo } = this.state.data;
+    if (!videoInfo) {
+      throw new Error('视频信息不存在');
+    }
+
+    const clipConfig = {
+      detectSceneChange: aiClipConfig.detectSceneChange ?? true,
+      detectSilence: aiClipConfig.detectSilence ?? true,
+      detectKeyframes: true,
+      detectEmotion: false,
+      removeSilence: aiClipConfig.removeSilence ?? true,
+      trimDeadTime: true,
+      autoTransition: true,
+      transitionType: 'fade' as const,
+      aiOptimize: true,
+      targetDuration: aiClipConfig.targetDuration,
+      pacingStyle: aiClipConfig.pacingStyle ?? 'normal'
+    };
+
+    try {
+      if (aiClipConfig.autoClip) {
+        // 一键智能剪辑
+        await aiClipService.smartClip(
+          videoInfo,
+          clipConfig.targetDuration,
+          clipConfig.pacingStyle
+        );
+      } else {
+        // 仅分析，不自动应用
+        await aiClipService.analyzeVideo(videoInfo, clipConfig);
+      }
+
+      this.updateState({ progress: 68 });
+    } catch (error) {
+      console.error('AI 剪辑步骤失败:', error);
+      // AI 剪辑失败不中断整个工作流
+    }
   }
 
   /**
