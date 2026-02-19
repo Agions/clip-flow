@@ -54,7 +54,7 @@ const { Option } = Select;
 
 // 工作流步骤配置
 const WORKFLOW_STEPS: Array<{
-  key: WorkflowStep;
+  key: WorkflowStep | 'ai-clip';
   title: string;
   description: string;
   icon: React.ReactNode;
@@ -94,6 +94,12 @@ const WORKFLOW_STEPS: Array<{
     title: '编辑脚本',
     description: '修改和完善解说词',
     icon: <EditOutlined />
+  },
+  {
+    key: 'ai-clip',
+    title: 'AI 剪辑',
+    description: '智能剪辑点检测与优化',
+    icon: <ScissorOutlined />
   },
   {
     key: 'timeline-edit',
@@ -234,6 +240,121 @@ export const WorkflowPage: React.FC = () => {
                 showIcon
                 className={styles.fileInfo}
               />
+            )}
+
+            <Divider />
+
+            <Title level={5}>
+              <RobotOutlined /> AI 剪辑配置
+            </Title>
+            <Row gutter={[16, 16]} className={styles.aiClipConfig}>
+              <Col span={12}>
+                <Card size="small">
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <Space>
+                      <Switch
+                        checked={aiClipConfig.enabled}
+                        onChange={v => setAiClipConfig(c => ({ ...c, enabled: v }))}
+                      />
+                      <Text strong>启用 AI 剪辑</Text>
+                    </Space>
+                    <Paragraph type="secondary" style={{ fontSize: 12, margin: 0 }}>
+                      自动检测剪辑点、识别静音片段、优化视频节奏
+                    </Paragraph>
+                  </Space>
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card size="small">
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <Space>
+                      <Switch
+                        checked={aiClipConfig.autoClip}
+                        onChange={v => setAiClipConfig(c => ({ ...c, autoClip: v }))}
+                        disabled={!aiClipConfig.enabled}
+                      />
+                      <Text strong>一键智能剪辑</Text>
+                    </Space>
+                    <Paragraph type="secondary" style={{ fontSize: 12, margin: 0 }}>
+                      自动应用高置信度的剪辑建议
+                    </Paragraph>
+                  </Space>
+                </Card>
+              </Col>
+            </Row>
+
+            {aiClipConfig.enabled && (
+              <Card size="small" style={{ marginTop: 16 }}>
+                <Row gutter={[16, 16]}>
+                  <Col span={8}>
+                    <Space>
+                      <Switch
+                        checked={aiClipConfig.detectSceneChange}
+                        onChange={v => setAiClipConfig(c => ({ ...c, detectSceneChange: v }))}
+                        size="small"
+                      />
+                      <Text>场景检测</Text>
+                    </Space>
+                  </Col>
+                  <Col span={8}>
+                    <Space>
+                      <Switch
+                        checked={aiClipConfig.detectSilence}
+                        onChange={v => setAiClipConfig(c => ({ ...c, detectSilence: v }))}
+                        size="small"
+                      />
+                      <Text>静音检测</Text>
+                    </Space>
+                  </Col>
+                  <Col span={8}>
+                    <Space>
+                      <Switch
+                        checked={aiClipConfig.removeSilence}
+                        onChange={v => setAiClipConfig(c => ({ ...c, removeSilence: v }))}
+                        size="small"
+                      />
+                      <Text>自动移除静音</Text>
+                    </Space>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+                  <Col span={12}>
+                    <Text>剪辑风格</Text>
+                    <Radio.Group
+                      value={aiClipConfig.pacingStyle}
+                      onChange={e => setAiClipConfig(c => ({ ...c, pacingStyle: e.target.value }))}
+                      size="small"
+                      style={{ marginTop: 8, display: 'flex' }}
+                    >
+                      <Radio.Button value="fast" style={{ flex: 1, textAlign: 'center' }}>
+                        <ThunderboltOutlined /> 快速
+                      </Radio.Button>
+                      <Radio.Button value="normal" style={{ flex: 1, textAlign: 'center' }}>
+                        <ClockCircleOutlined /> 标准
+                      </Radio.Button>
+                      <Radio.Button value="slow" style={{ flex: 1, textAlign: 'center' }}>
+                        <VideoCameraOutlined /> 舒缓
+                      </Radio.Button>
+                    </Radio.Group>
+                  </Col>
+                  <Col span={12}>
+                    <Text>目标时长（可选）</Text>
+                    <Select
+                      value={aiClipConfig.targetDuration || 'original'}
+                      onChange={v => setAiClipConfig(c => ({ ...c, targetDuration: v === 'original' ? undefined : v }))}
+                      style={{ width: '100%', marginTop: 8 }}
+                      size="small"
+                    >
+                      <Select.Option value="original">保持原时长</Select.Option>
+                      <Select.Option value={30}>30秒</Select.Option>
+                      <Select.Option value={60}>1分钟</Select.Option>
+                      <Select.Option value={120}>2分钟</Select.Option>
+                      <Select.Option value={180}>3分钟</Select.Option>
+                    </Select>
+                  </Col>
+                </Row>
+              </Card>
             )}
           </Card>
         );

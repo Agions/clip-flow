@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Layout, Card, Button, Dropdown, Space, Typography, Tabs, 
+import {
+  Layout, Card, Button, Dropdown, Space, Typography, Tabs,
   Row, Col, Progress, Tooltip, message, Empty, Tag, Skeleton
 } from 'antd';
-import { 
-  PlayCircleOutlined, PauseCircleOutlined, ScissorOutlined, 
-  SaveOutlined, UndoOutlined, RedoOutlined, DownloadOutlined, 
+import {
+  PlayCircleOutlined, PauseCircleOutlined, ScissorOutlined,
+  SaveOutlined, UndoOutlined, RedoOutlined, DownloadOutlined,
   FileImageOutlined, SettingOutlined, UploadOutlined, CopyOutlined,
   DeleteOutlined, CheckCircleOutlined, ShareAltOutlined, PlusOutlined,
-  FullscreenOutlined, SyncOutlined, ExpandOutlined, LockOutlined
+  FullscreenOutlined, SyncOutlined, ExpandOutlined, LockOutlined,
+  RobotOutlined, ThunderboltOutlined
 } from '@ant-design/icons';
 import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
@@ -19,6 +20,8 @@ import styles from './VideoEditor.module.less';
 // 导入组件和服务
 import { VideoSegment, extractKeyFrames, generateThumbnail, analyzeVideo } from '@/services/videoService';
 import { saveProjectFile } from '@/services/projectService';
+import { AIClipAssistant } from '@/components/AIClipAssistant';
+import { useAIClip } from '@/core/hooks';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -535,6 +538,49 @@ const VideoEditor: React.FC = () => {
                 {renderKeyframes()}
               </TabPane>
               
+              <TabPane tab={<span><RobotOutlined /> AI 剪辑</span>} key="ai-clip">
+                <div className={styles.aiClipPanel}>
+                  <Title level={5} className={styles.sectionTitle}>
+                    <RobotOutlined /> AI 智能剪辑助手
+                  </Title>
+                  {videoSrc && duration > 0 ? (
+                    <AIClipAssistant
+                      videoInfo={{
+                        id: projectId || 'new',
+                        path: videoSrc,
+                        name: '当前视频',
+                        duration,
+                        width: 1920,
+                        height: 1080,
+                        fps: 30,
+                        format: 'mp4',
+                        size: 0,
+                        createdAt: new Date().toISOString()
+                      }}
+                      onAnalysisComplete={(result) => {
+                        console.log('AI 剪辑分析完成:', result);
+                        message.success(`检测到 ${result.cutPoints.length} 个剪辑点`);
+                      }}
+                      onApplySuggestions={(segments) => {
+                        console.log('应用剪辑建议:', segments);
+                        // 转换并应用剪辑片段
+                        const newSegments = segments.map(s => ({
+                          start: s.startTime,
+                          end: s.endTime,
+                          type: s.type === 'silence' ? 'silence' : 'video' as const,
+                          content: s.content
+                        }));
+                        setSegments(newSegments);
+                        addToHistory(newSegments);
+                        message.success('已应用 AI 剪辑建议');
+                      }}
+                    />
+                  ) : (
+                    <Empty description="请先加载视频" />
+                  )}
+                </div>
+              </TabPane>
+
               <TabPane tab="效果" key="effects">
                 <div className={styles.effectsPanel}>
                   <Title level={5} className={styles.sectionTitle}>视频效果</Title>
