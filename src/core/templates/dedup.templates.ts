@@ -39,6 +39,13 @@ export interface DedupConfig {
   variantIntensity?: number;
 }
 
+// 原创性报告结果
+export interface OriginalityReport {
+  score: number;
+  duplicates: DuplicateResult[];
+  suggestions: string[];
+}
+
 // 常用短语库（用于检测模板化内容）
 const COMMON_PHRASES = {
   // 开场套话
@@ -548,13 +555,6 @@ class DedupService {
         content = this.minorRewrite(content);
       }
     }
-    } else if (similarity >= 0.8) {
-      // 大幅改写
-      content = this.majorRewrite(content);
-    } else {
-      // 轻微调整
-      content = this.minorRewrite(content);
-    }
 
     return {
       ...segment,
@@ -699,11 +699,7 @@ class DedupService {
   /**
    * 生成原创性报告
    */
-  generateOriginalityReport(script: ScriptData): {
-    score: number;
-    duplicates: DuplicateResult[];
-    suggestions: string[];
-  } {
+  generateOriginalityReport(script: ScriptData): OriginalityReport {
     const duplicates = this.detectDuplicates(script);
 
     // 计算原创性分数
@@ -742,4 +738,4 @@ export const dedupService = new DedupService();
 export default dedupService;
 
 // 导出类型
-export type { DedupConfig, DuplicateResult, DedupStrategy };
+export type { DedupConfig, DuplicateResult, DedupStrategy, OriginalityReport };

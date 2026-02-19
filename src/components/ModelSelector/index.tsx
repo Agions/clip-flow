@@ -40,6 +40,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useModel, useModelCost, useRecommendedModel } from '@/core/hooks/useModel';
 import { LLM_MODELS, MODEL_RECOMMENDATIONS, DEFAULT_LLM_MODEL } from '@/core/constants';
+import { MODEL_PROVIDERS } from '@/core/config/models.config';
 import type { AIModel, ModelCategory, ModelProvider } from '@/core/types';
 import styles from './index.module.less';
 
@@ -224,7 +225,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
 
               <div className={styles.features}>
                 {model.features.slice(0, 3).map((feature, idx) => (
-                  <Tag key={idx} size="small" className={styles.featureTag}>
+                  <Tag key={idx} className={styles.featureTag}>
                     {feature}
                   </Tag>
                 ))}
@@ -241,7 +242,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
                   </Tooltip>
                   {showCost && cost && (
                     <Tooltip title="预估成本（500字脚本）">
-                      <Tag icon={<DollarOutlined />} size="small" color="green">
+                      <Tag icon={<DollarOutlined />} color="green">
                         {cost}
                       </Tag>
                     </Tooltip>
