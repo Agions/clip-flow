@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Layout, Card, Button, Dropdown, Typography, Tabs,
   Row, Col, message, Tooltip, Empty, Space, Tag, Progress
@@ -7,12 +7,12 @@ import {
 import {
   PlayCircleOutlined, PauseCircleOutlined,
   SaveOutlined, UndoOutlined, RedoOutlined, DownloadOutlined,
-  FileImageOutlined, SettingOutlined, UploadOutlined,
+  UploadOutlined,
   DeleteOutlined, PlusOutlined,
   FullscreenOutlined,
   RobotOutlined
 } from '@ant-design/icons';
-import { invoke } from '@tauri-apps/api/tauri';
+// import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 
 import styles from './VideoEditor.module.less';
@@ -33,11 +33,13 @@ const VideoEditor: React.FC = () => {
   // 状态管理
   const [videoSrc, setVideoSrc] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [analyzing, setAnalyzing] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [segments, setSegments] = useState<VideoSegment[]>([]);
   const [keyframes, setKeyframes] = useState<string[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeTab, setActiveTab] = useState<string>('trim');
   const [editHistory, setEditHistory] = useState<any[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);

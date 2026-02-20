@@ -3,11 +3,11 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   Layout, Card, Breadcrumb, Tabs, Spin, Empty, Button, 
   Row, Col, Typography, Space, message, 
-  Tag, Tooltip, Descriptions, Divider
+  Tag, Descriptions, Divider
 } from 'antd';
 import { 
   HomeOutlined, PlayCircleOutlined, FileTextOutlined, 
-  SettingOutlined, VideoCameraOutlined, ClockCircleOutlined,
+  SettingOutlined, VideoCameraOutlined,
   FullscreenOutlined, SaveOutlined, 
   ExportOutlined, LoadingOutlined, InfoCircleOutlined
 } from '@ant-design/icons';
@@ -29,6 +29,7 @@ import type { ScriptData } from '@/core/types';
 import type { VideoMetadata } from '@/services/videoService';
 
 const { Content } = Layout;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 
@@ -76,6 +77,7 @@ const VideoStudio: React.FC = () => {
   const [metadata, setMetadata] = useState<VideoMetadata | null>(null);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<string>('edit');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [processingVideo, setProcessingVideo] = useState<boolean>(false);
   const [script, setScript] = useState<ScriptData | null>(null);
   
@@ -170,6 +172,7 @@ const VideoStudio: React.FC = () => {
   };
   
   // 处理处理完成回调
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleProcessingComplete = (updatedProject: Project) => {
     setProject(updatedProject);
     setProcessingVideo(false);
