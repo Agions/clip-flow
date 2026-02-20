@@ -6,10 +6,11 @@ import { Script } from '@/services/aiService';
 import styles from './ExportPanel.module.less';
 
 interface ExportPanelProps {
-  script: Script;
+  script?: Script;
+  onExport?: (settings: any) => Promise<string> | void;
 }
 
-const ExportPanel: React.FC<ExportPanelProps> = ({ script }) => {
+const ExportPanel: React.FC<ExportPanelProps> = ({ script, onExport }) => {
   const [exportFormat, setExportFormat] = useState<ExportFormat>(ExportFormat.TXT);
   const [filename, setFilename] = useState<string>(`脚本_${script.id}`);
   const [exporting, setExporting] = useState(false);
@@ -28,6 +29,31 @@ const ExportPanel: React.FC<ExportPanelProps> = ({ script }) => {
   const handleExport = async () => {
     if (!filename.trim()) {
       message.error('请输入有效的文件名');
+      return;
+    }
+    
+    // 如果提供了 onExport 回调，使用它
+    if (onExport) {
+      setExporting(true);
+      try {
+        const settings = {
+          format: exportFormat,
+          filename: filename,
+        };
+        await onExport(settings);
+        message.success('导出成功');
+      } catch (error) {
+        console.error('导出失败:', error);
+        message.error('导出失败，请稍后重试');
+      } finally {
+        setExporting(false);
+      }
+      return;
+    }
+    
+    // 否则使用默认的导出逻辑
+    if (!script) {
+      message.error('没有可导出的脚本');
       return;
     }
     

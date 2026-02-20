@@ -342,7 +342,7 @@ export const WorkflowPage: React.FC = () => {
                     <Text>目标时长（可选）</Text>
                     <Select
                       value={aiClipConfig.targetDuration || 'original'}
-                      onChange={v => setAiClipConfig(c => ({ ...c, targetDuration: v === 'original' ? undefined : v }))}
+                      onChange={v => setAiClipConfig(c => ({ ...c, targetDuration: v === 'original' ? undefined : Number(v) }))}
                       style={{ width: '100%', marginTop: 8 }}
                       size="small"
                     >
@@ -435,9 +435,11 @@ export const WorkflowPage: React.FC = () => {
           <Card title="生成脚本" className={styles.stepCard}>
             <Space direction="vertical" style={{ width: '100%' }} size="large">
               <ModelSelector
-                models={models}
-                selected={selectedModel}
-                onSelect={setSelectedModel}
+                onSelect={(modelId) => {
+                  const model = models.find(m => m.id === modelId);
+                  setSelectedModel(model || null);
+                }}
+                taskType="script"
               />
 
               <Card size="small" title="脚本参数">
@@ -680,7 +682,7 @@ export const WorkflowPage: React.FC = () => {
                 timeline={data.timeline}
                 videoInfo={data.videoInfo}
                 script={data.editedScript || data.generatedScript}
-                onSave={editTimeline}
+                onSave={() => editTimeline(true)}
               />
             )}
           </Card>
