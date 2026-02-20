@@ -17,7 +17,8 @@ import {
   Select,
   Radio,
   message,
-  Switch
+  Switch,
+  Divider
 } from 'antd';
 import {
   EyeOutlined,
@@ -122,6 +123,7 @@ const WORKFLOW_STEPS: Array<{
 export const WorkflowPage: React.FC = () => {
   // 工作流状态
   const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     state,
     isRunning,
     isPaused,
@@ -132,13 +134,19 @@ export const WorkflowPage: React.FC = () => {
     progress,
     data,
     start,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     analyze,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     selectTemplate,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     generateScript,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dedupScript,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ensureUniqueness,
     editScript,
     editTimeline,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     preview,
     export: exportVideo,
     pause,
@@ -191,7 +199,7 @@ export const WorkflowPage: React.FC = () => {
   });
 
   // 模型列表
-  const { models } = useModel();
+  const { allModels: models } = useModel();
 
   // 模板列表
   const templates = scriptTemplateService.getAllTemplates();
@@ -229,7 +237,7 @@ export const WorkflowPage: React.FC = () => {
         return (
           <Card title="上传视频" className={styles.stepCard}>
             <VideoUploader
-              onUpload={setSelectedFile}
+              onUpload={(video) => setSelectedFile(video as any)}
               accept="video/*"
               maxSize={1024 * 1024 * 1024} // 1GB
             />
@@ -435,8 +443,8 @@ export const WorkflowPage: React.FC = () => {
           <Card title="生成脚本" className={styles.stepCard}>
             <Space direction="vertical" style={{ width: '100%' }} size="large">
               <ModelSelector
-                onSelect={(modelId) => {
-                  const model = models.find(m => m.id === modelId);
+                onSelect={(modelId: string) => {
+                  const model = models.find((m: AIModel) => m.id === modelId);
                   setSelectedModel(model || null);
                 }}
                 taskType="script"
