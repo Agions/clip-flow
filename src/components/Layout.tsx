@@ -75,12 +75,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       onClick: () => navigate('/')
     },
     {
-      key: '/editor',
-      icon: <ScissorOutlined />,
-      label: '视频剪辑',
-      onClick: () => navigate('/editor')
-    },
-    {
       key: '/templates',
       icon: <AppstoreOutlined />,
       label: '模板中心',
@@ -205,10 +199,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           mode="inline"
           className={styles.menu}
           selectedKeys={[
-            isActive('/') && !isActive('/project') && !isActive('/editor') ? '/' : 
+            isActive('/') && !isActive('/project') ? '/' : 
             isActive('/project') ? '/project' :
             isActive('/templates') ? '/templates' :
-            isActive('/editor') ? '/editor' :
             isActive('/scripts') ? '/scripts' :
             isActive('/settings') ? '/settings' : ''
           ]}
@@ -232,7 +225,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {location.pathname === '/' && '欢迎使用 BlazeCut'}
             {location.pathname.startsWith('/project') && '项目管理'}
             {location.pathname.startsWith('/templates') && '模板中心'}
-            {location.pathname.startsWith('/editor') && '视频剪辑工作台'}
             {location.pathname.startsWith('/scripts') && '脚本库'}
             {location.pathname.startsWith('/settings') && '系统设置'}
           </div>
