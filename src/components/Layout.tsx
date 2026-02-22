@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Layout as AntLayout, Menu, Button, Tooltip, Avatar, Typography, Dropdown, Badge, Space, theme } from 'antd';
 import { 
   HomeOutlined, 
-  VideoCameraOutlined, 
+  ProjectOutlined, 
   SettingOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   BellOutlined,
   UserOutlined,
   QuestionCircleOutlined,
-  AppstoreOutlined,
-  FireOutlined,
-  ScissorOutlined,
-  BookOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Layout.module.less';
@@ -25,42 +21,30 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-/**
- * 应用整体布局组件
- * 提供响应式布局、侧边导航、顶部栏等功能
- */
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
-  const [notifications, setNotifications] = useState<number>(3);
   const [browserWidth, setBrowserWidth] = useState(window.innerWidth);
   
-  // 响应式折叠控制
   useEffect(() => {
     const handleResize = () => {
       setBrowserWidth(window.innerWidth);
-      if (window.innerWidth < 768 && !collapsed) {
-        setCollapsed(true);
-      } else if (window.innerWidth >= 1200 && collapsed) {
-        setCollapsed(false);
-      }
+      if (window.innerWidth < 768 && !collapsed) setCollapsed(true);
+      else if (window.innerWidth >= 1200 && collapsed) setCollapsed(false);
     };
-    
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [collapsed]);
-  
-  // 判断当前路径是否匹配
-  const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
-    }
-    return location.pathname.startsWith(path);
+
+  const getSelectedKey = () => {
+    if (location.pathname === '/') return '/';
+    if (location.pathname.startsWith('/projects') || location.pathname.startsWith('/project') || location.pathname.startsWith('/editor')) return '/projects';
+    if (location.pathname.startsWith('/settings')) return '/settings';
+    return '/';
   };
 
-  // 导航菜单项
   const menuItems = [
     {
       key: '/',
@@ -69,22 +53,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       onClick: () => navigate('/')
     },
     {
-      key: '/project',
-      icon: <VideoCameraOutlined />,
+      key: '/projects',
+      icon: <ProjectOutlined />,
       label: '项目管理',
-      onClick: () => navigate('/')
-    },
-    {
-      key: '/templates',
-      icon: <AppstoreOutlined />,
-      label: '模板中心',
-      onClick: () => navigate('/templates')
-    },
-    {
-      key: '/scripts',
-      icon: <BookOutlined />,
-      label: '脚本库',
-      onClick: () => navigate('/scripts')
+      onClick: () => navigate('/projects')
     },
     {
       key: '/settings',
@@ -94,87 +66,32 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   ];
 
-  // 处理折叠侧边栏
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
+  const getPageTitle = () => {
+    const path = location.pathname;
+    if (path === '/') return '首页';
+    if (path.startsWith('/projects')) return '项目管理';
+    if (path.startsWith('/project/new')) return '创建项目';
+    if (path.startsWith('/project/edit')) return '编辑项目';
+    if (path.startsWith('/project/')) return '项目详情';
+    if (path.startsWith('/editor')) return '视频工作台';
+    if (path.startsWith('/settings')) return '系统设置';
+    return 'ClipFlow';
   };
 
-  // 用户下拉菜单
   const userMenu = {
     items: [
-      {
-        key: 'profile',
-        label: '个人信息',
-        icon: <UserOutlined />
-      },
-      {
-        key: 'preferences',
-        label: '偏好设置',
-        icon: <SettingOutlined />
-      },
-      {
-        type: 'divider',
-      },
-      {
-        key: 'logout',
-        label: '退出登录',
-        danger: true
-      }
+      { key: 'profile', label: '个人信息', icon: <UserOutlined /> },
+      { key: 'preferences', label: '偏好设置', icon: <SettingOutlined /> },
+      { type: 'divider' as const },
+      { key: 'logout', label: '退出登录', danger: true }
     ],
     onClick: (e: any) => {
-      if (e.key === 'preferences') {
-        navigate('/settings');
-      } else if (e.key === 'logout') {
-        // 实现登出逻辑
-        console.log('用户登出');
-      }
-    }
-  };
-  
-  // 通知菜单
-  const notificationMenu = {
-    items: [
-      {
-        key: '1',
-        label: <div>
-          <Text strong>视频处理完成</Text>
-          <div><Text type="secondary">《夏日海滩》视频已处理完成</Text></div>
-        </div>
-      },
-      {
-        key: '2',
-        label: <div>
-          <Text strong>脚本生成完成</Text>
-          <div><Text type="secondary">AI助手已完成脚本生成</Text></div>
-        </div>
-      },
-      {
-        key: '3',
-        label: <div>
-          <Text strong>系统通知</Text>
-          <div><Text type="secondary">有新版本可用：v2.1.0</Text></div>
-        </div>
-      },
-      {
-        type: 'divider',
-      },
-      {
-        key: 'all',
-        label: <Text type="secondary">查看全部通知</Text>
-      }
-    ],
-    onClick: (e: any) => {
-      if (e.key === 'all') {
-        navigate('/notifications');
-      } else {
-        // 标记通知为已读
-        setNotifications(prev => prev - 1);
-      }
+      if (e.key === 'preferences') navigate('/settings');
     }
   };
 
   return (
-    <AntLayout className={`${styles.layout} ${collapsed ? styles.siderCollapsed : ''}`}>
+    <AntLayout className={styles.layout} style={{ minHeight: '100vh' }}>
       <Sider 
         className={styles.sider} 
         theme="light"
@@ -182,82 +99,126 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         collapsible
         collapsed={collapsed}
         width={220}
-        breakpoint="lg"
+        collapsedWidth={64}
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: 100,
+          borderRight: '1px solid rgba(0,0,0,0.06)'
+        }}
       >
-        <div className={styles.logo}>
-          {!collapsed ? (
-            <Space>
-              <FireOutlined style={{ fontSize: '24px', color: '#FF5252' }} />
-              <Title level={4} style={{ margin: 0 }}>BlazeCut</Title>
-            </Space>
-          ) : (
-            <FireOutlined style={{ fontSize: '24px', color: '#FF5252' }} />
+        {/* Logo */}
+        <div style={{
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          padding: collapsed ? '0' : '0 20px',
+          borderBottom: '1px solid rgba(0,0,0,0.06)',
+          cursor: 'pointer',
+          transition: 'all 0.2s'
+        }} onClick={() => navigate('/')}>
+          <div style={{
+            width: 32,
+            height: 32,
+            borderRadius: 8,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            fontWeight: 700,
+            fontSize: 16,
+            flexShrink: 0
+          }}>
+            C
+          </div>
+          {!collapsed && (
+            <Title level={4} style={{ margin: '0 0 0 12px', fontSize: 18, whiteSpace: 'nowrap' }}>
+              ClipFlow
+            </Title>
           )}
         </div>
         
+        {/* 导航菜单 */}
         <Menu
           mode="inline"
-          className={styles.menu}
-          selectedKeys={[
-            isActive('/') && !isActive('/project') ? '/' : 
-            isActive('/project') ? '/project' :
-            isActive('/templates') ? '/templates' :
-            isActive('/scripts') ? '/scripts' :
-            isActive('/settings') ? '/settings' : ''
-          ]}
+          selectedKeys={[getSelectedKey()]}
           items={menuItems}
+          style={{ border: 'none', marginTop: 8 }}
         />
         
-        <div className={styles.collapseButton}>
-          <Tooltip title={collapsed ? '展开菜单' : '收起菜单'} placement="right">
+        {/* 折叠按钮 */}
+        <div style={{
+          position: 'absolute',
+          bottom: 16,
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
+          <Tooltip title={collapsed ? '展开' : '收起'} placement="right">
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={toggleCollapsed}
+              onClick={() => setCollapsed(!collapsed)}
+              style={{ color: 'rgba(0,0,0,0.45)' }}
             />
           </Tooltip>
         </div>
       </Sider>
       
-      <AntLayout>
-        <Header className={styles.header}>
-          <div className={styles.headerTitle}>
-            {location.pathname === '/' && '欢迎使用 BlazeCut'}
-            {location.pathname.startsWith('/project') && '项目管理'}
-            {location.pathname.startsWith('/templates') && '模板中心'}
-            {location.pathname.startsWith('/scripts') && '脚本库'}
-            {location.pathname.startsWith('/settings') && '系统设置'}
-          </div>
-          <div className={styles.headerControls}>
-            <Tooltip title="帮助中心">
-              <Button type="text" shape="circle" icon={<QuestionCircleOutlined />} />
+      <AntLayout style={{ marginLeft: collapsed ? 64 : 220, transition: 'margin-left 0.2s' }}>
+        {/* 顶部栏 */}
+        <Header style={{
+          background: '#fff',
+          padding: '0 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid rgba(0,0,0,0.06)',
+          height: 56,
+          lineHeight: '56px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 99,
+        }}>
+          <Text strong style={{ fontSize: 16 }}>{getPageTitle()}</Text>
+          
+          <Space size={4}>
+            <Tooltip title="帮助">
+              <Button type="text" shape="circle" icon={<QuestionCircleOutlined />} size="small" />
             </Tooltip>
-            
-            <Dropdown menu={notificationMenu} trigger={['click']} placement="bottomRight" arrow>
-              <Badge count={notifications} overflowCount={99} size="small">
-                <Button type="text" shape="circle" icon={<BellOutlined />} />
+            <Tooltip title="通知">
+              <Badge count={0} size="small">
+                <Button type="text" shape="circle" icon={<BellOutlined />} size="small" />
               </Badge>
-            </Dropdown>
-            
-            <Dropdown menu={userMenu} placement="bottomRight" trigger={['click']} arrow>
-              <Button type="text" className={styles.userButton}>
+            </Tooltip>
+            <Dropdown menu={userMenu} placement="bottomRight" trigger={['click']}>
+              <Button type="text" style={{ padding: '0 8px' }}>
                 <Space>
-                  <Avatar size="small" style={{ backgroundColor: '#1E88E5' }}>U</Avatar>
-                  {browserWidth > 576 && <span>用户</span>}
+                  <Avatar size="small" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>U</Avatar>
+                  {browserWidth > 768 && <span style={{ fontSize: 13 }}>用户</span>}
                 </Space>
               </Button>
             </Dropdown>
-          </div>
+          </Space>
         </Header>
         
-        <Content className={styles.content}>
-          <div className={styles.contentWrapper}>
-            {children}
-          </div>
+        {/* 内容区 */}
+        <Content style={{
+          padding: 24,
+          minHeight: 'calc(100vh - 56px)',
+          background: isDarkMode ? '#141414' : '#f5f5f5',
+        }}>
+          {children}
         </Content>
       </AntLayout>
     </AntLayout>
   );
 };
 
-export default Layout; 
+export default Layout;

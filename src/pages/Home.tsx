@@ -1,498 +1,279 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Typography, Button, Card, Row, Col, List, 
-  Empty, Spin, Space, message, Modal, Statistic, Divider, Tag
+  Typography, Button, Card, Row, Col, 
+  Statistic, Space, Tag, Progress, Timeline
 } from 'antd';
 import { 
   VideoCameraOutlined, 
   PlusOutlined, 
-  EditOutlined, 
-  DeleteOutlined, 
-  FireOutlined,
   PlayCircleOutlined,
   RocketOutlined,
   ThunderboltOutlined,
-  CodeOutlined,
-  CameraOutlined,
-  CloudOutlined,
-  ToolOutlined,
-  StarOutlined,
-  BulbOutlined
+  FileTextOutlined,
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+  ArrowRightOutlined,
+  ExperimentOutlined,
+  ScissorOutlined,
+  SoundOutlined,
+  ExportOutlined,
+  ProjectOutlined,
 } from '@ant-design/icons';
 import { useTheme } from '@/context/ThemeContext';
-import styles from './Home.module.less';
 
 const { Title, Paragraph, Text } = Typography;
 
-// 定义项目接口
-interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-  status: 'draft' | 'processing' | 'completed';
-  thumbnail?: string;
-}
-
-/**
- * 首页组件
- */
 const Home = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState<Project[]>([]);
   const { isDarkMode } = useTheme();
-  
-  // 获取当前时间
-  const now = new Date();
-  const hours = now.getHours();
-  
-  // 根据时间段生成问候语
-  const getGreeting = () => {
-    if (hours < 12) return '早上好';
-    if (hours < 18) return '下午好';
-    return '晚上好';
-  };
 
-  // 加载项目数据
-  useEffect(() => {
-    // 模拟加载
-    const timer = setTimeout(() => {
-      // 示例数据
-      const mockProjects: Project[] = [
-        {
-          id: '1',
-          name: '产品宣传视频',
-          description: '公司新产品宣传短视频',
-          createdAt: '2023-05-15T08:00:00.000Z',
-          updatedAt: '2023-05-16T10:30:00.000Z',
-          status: 'completed',
-          thumbnail: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
-        },
-        {
-          id: '2',
-          name: '社交媒体短视频',
-          description: '抖音和小红书推广内容',
-          createdAt: '2023-05-10T12:00:00.000Z',
-          updatedAt: '2023-05-11T09:15:00.000Z',
-          status: 'draft',
-          thumbnail: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'
-        },
-        {
-          id: '3',
-          name: '教学视频系列',
-          description: '软件使用教程系列视频',
-          createdAt: '2023-05-05T15:45:00.000Z',
-          updatedAt: '2023-05-08T14:20:00.000Z',
-          status: 'processing',
-          thumbnail: 'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg'
-        }
-      ];
-      
-      setProjects(mockProjects);
-      setLoading(false);
-    }, 800);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  const hours = new Date().getHours();
+  const greeting = hours < 12 ? '早上好' : hours < 18 ? '下午好' : '晚上好';
 
-  // 格式化日期
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('zh-CN', { 
-      year: 'numeric',
-      month: 'long', 
-      day: 'numeric' 
-    });
-  };
-  
-  // 创建新项目
-  const handleCreateProject = () => {
-    navigate('/project/new');
-  };
-  
-  // 查看项目
-  const handleViewProject = (id: string) => {
-    navigate(`/project/${id}`);
-  };
-  
-  // 编辑项目
-  const handleEditProject = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/project/edit/${id}`);
-  };
-  
-  // 进入编辑器
-  const handleOpenEditor = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/editor/${id}`);
-  };
-  
-  // 删除项目
-  const handleDeleteProject = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    Modal.confirm({
-      title: '确认删除',
-      content: '删除后无法恢复，确定要删除此项目吗？',
-      okText: '删除',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: () => {
-        setProjects(projects.filter(p => p.id !== id));
-        message.success('项目已删除');
-      }
-    });
-  };
+  // 工作流步骤
+  const workflowSteps = [
+    { icon: <VideoCameraOutlined />, title: '上传视频', desc: '支持 MP4/MOV/WebM', color: '#667eea' },
+    { icon: <ThunderboltOutlined />, title: '智能分析', desc: '场景检测 · 关键帧', color: '#764ba2' },
+    { icon: <FileTextOutlined />, title: '脚本生成', desc: '8大AI模型 · 7种模板', color: '#f093fb' },
+    { icon: <ExperimentOutlined />, title: '去重优化', desc: '原创性保障', color: '#4facfe' },
+    { icon: <ScissorOutlined />, title: '智能剪辑', desc: '时间轴编排', color: '#43e97b' },
+    { icon: <ExportOutlined />, title: '导出发布', desc: '720p ~ 4K', color: '#fa709a' },
+  ];
 
   return (
-    <div className={styles.container}>
-      {/* 欢迎区 */}
+    <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      {/* 欢迎横幅 */}
       <Card 
-        className={`${styles.hero} ${isDarkMode ? styles.darkCard : ''}`}
         bordered={false}
+        style={{ 
+          marginBottom: 24,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderRadius: 12,
+        }}
+        styles={{ body: { padding: '40px 36px' } }}
       >
-        <div className={styles.heroContent}>
-          <Title level={1} className={styles.title}>
-            BlazeCut <span className={styles.highlight}>智能视频剪辑</span>
-          </Title>
-          <Paragraph className={styles.subtitle}>
-            AI赋能的短视频创作工具，让视频制作更简单、更高效
-          </Paragraph>
-          <div className={styles.heroButtons}>
-            <Button 
-              type="primary" 
-              size="large" 
-              icon={<PlusOutlined />} 
-              onClick={handleCreateProject}
-              className={`${styles.primaryButton} ${styles.shineButton}`}
-            >
-              创建新项目
-            </Button>
-            <Button
-              size="large"
-              icon={<PlayCircleOutlined />}
-              onClick={() => navigate('/editor')}
-              className={styles.secondaryButton}
-            >
-              进入工作台
-            </Button>
-          </div>
-        </div>
+        <Row align="middle" justify="space-between">
+          <Col>
+            <Title level={2} style={{ color: '#fff', margin: 0, fontWeight: 600 }}>
+              {greeting}，欢迎使用 ClipFlow
+            </Title>
+            <Paragraph style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, margin: '8px 0 20px' }}>
+              AI 驱动的专业视频内容创作平台
+            </Paragraph>
+            <Space size={12}>
+              <Button 
+                type="primary" 
+                size="large" 
+                icon={<PlusOutlined />} 
+                onClick={() => navigate('/project/new')}
+                style={{ 
+                  background: '#fff', 
+                  color: '#667eea', 
+                  border: 'none',
+                  fontWeight: 600,
+                  height: 44,
+                  borderRadius: 8,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                }}
+              >
+                创建新项目
+              </Button>
+              <Button
+                size="large"
+                icon={<ProjectOutlined />}
+                onClick={() => navigate('/projects')}
+                style={{ 
+                  background: 'rgba(255,255,255,0.2)', 
+                  color: '#fff', 
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  height: 44,
+                  borderRadius: 8,
+                }}
+              >
+                项目管理
+              </Button>
+            </Space>
+          </Col>
+          <Col>
+            <div style={{
+              fontSize: 80,
+              color: 'rgba(255,255,255,0.15)',
+              lineHeight: 1,
+            }}>
+              <PlayCircleOutlined />
+            </div>
+          </Col>
+        </Row>
       </Card>
-      
-      {/* 统计信息 */}
-      <Row gutter={[24, 24]} className={styles.stats}>
-        <Col xs={24} sm={8}>
-          <Card className={`${styles.statsCard} ${isDarkMode ? styles.darkCard : ''}`}>
-            <Statistic 
-              title="项目总数" 
-              value={projects.length} 
-              prefix={<VideoCameraOutlined className={styles.statIcon} />} 
-            />
+
+      {/* 统计卡片 */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        {[
+          { title: '总项目', value: 12, icon: <VideoCameraOutlined />, color: '#667eea', suffix: '个' },
+          { title: '已完成', value: 8, icon: <CheckCircleOutlined />, color: '#52c41a', suffix: '个' },
+          { title: '本月创作', value: 5, icon: <RocketOutlined />, color: '#fa8c16', suffix: '个' },
+          { title: '节省时间', value: 24, icon: <ClockCircleOutlined />, color: '#13c2c2', suffix: '小时' },
+        ].map((item, idx) => (
+          <Col xs={12} sm={6} key={idx}>
+            <Card bordered={false} style={{ borderRadius: 10 }} styles={{ body: { padding: '20px 24px' } }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 10,
+                  background: `${item.color}15`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 20, color: item.color,
+                }}>
+                  {item.icon}
+                </div>
+                <div>
+                  <Text type="secondary" style={{ fontSize: 12 }}>{item.title}</Text>
+                  <div style={{ fontSize: 24, fontWeight: 700, lineHeight: 1.2 }}>
+                    {item.value}<span style={{ fontSize: 13, fontWeight: 400, color: 'rgba(0,0,0,0.45)', marginLeft: 2 }}>{item.suffix}</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+
+      <Row gutter={[16, 16]}>
+        {/* 工作流程概览 */}
+        <Col xs={24} lg={14}>
+          <Card 
+            title={<><RocketOutlined /> 创作流程</>}
+            bordered={false} 
+            style={{ borderRadius: 10, height: '100%' }}
+          >
+            <Row gutter={[12, 16]}>
+              {workflowSteps.map((step, idx) => (
+                <Col xs={12} sm={8} key={idx}>
+                  <div style={{
+                    padding: '16px 12px',
+                    borderRadius: 10,
+                    background: isDarkMode ? 'rgba(255,255,255,0.04)' : '#fafafa',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    border: '1px solid transparent',
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.borderColor = step.color;
+                    (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
+                    (e.currentTarget as HTMLElement).style.transform = 'none';
+                  }}
+                  >
+                    <div style={{
+                      width: 40, height: 40, borderRadius: 10,
+                      background: `${step.color}15`,
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 18, color: step.color, marginBottom: 8,
+                    }}>
+                      {step.icon}
+                    </div>
+                    <div style={{ fontWeight: 600, fontSize: 13 }}>{step.title}</div>
+                    <Text type="secondary" style={{ fontSize: 11 }}>{step.desc}</Text>
+                  </div>
+                </Col>
+              ))}
+            </Row>
+            
+            <div style={{ marginTop: 20, textAlign: 'center' }}>
+              <Button 
+                type="primary" 
+                icon={<PlusOutlined />}
+                onClick={() => navigate('/project/new')}
+                style={{ 
+                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                  border: 'none',
+                  borderRadius: 8,
+                  height: 40,
+                }}
+              >
+                开始创作 <ArrowRightOutlined />
+              </Button>
+            </div>
           </Card>
         </Col>
-        <Col xs={24} sm={8}>
-          <Card className={`${styles.statsCard} ${isDarkMode ? styles.darkCard : ''}`}>
-            <Statistic 
-              title="已完成项目" 
-              value={projects.filter(p => p.status === 'completed').length} 
-              prefix={<StarOutlined className={styles.statIcon} />} 
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={8}>
-          <Card className={`${styles.statsCard} ${isDarkMode ? styles.darkCard : ''}`}>
-            <Statistic 
-              title="处理中项目" 
-              value={projects.filter(p => p.status === 'processing').length} 
-              prefix={<FireOutlined className={styles.statIcon} />} 
+
+        {/* 最近动态 */}
+        <Col xs={24} lg={10}>
+          <Card 
+            title={<><ClockCircleOutlined /> 最近动态</>}
+            bordered={false} 
+            style={{ borderRadius: 10, height: '100%' }}
+          >
+            <Timeline
+              items={[
+                {
+                  color: '#52c41a',
+                  children: (
+                    <div>
+                      <Text strong>产品宣传视频</Text>
+                      <div><Text type="secondary" style={{ fontSize: 12 }}>导出完成 · MP4 · 1080p</Text></div>
+                      <Text type="secondary" style={{ fontSize: 11 }}>2 小时前</Text>
+                    </div>
+                  )
+                },
+                {
+                  color: '#667eea',
+                  children: (
+                    <div>
+                      <Text strong>教学系列 EP03</Text>
+                      <div><Text type="secondary" style={{ fontSize: 12 }}>脚本生成完成 · Qwen 3.5</Text></div>
+                      <Text type="secondary" style={{ fontSize: 11 }}>5 小时前</Text>
+                    </div>
+                  )
+                },
+                {
+                  color: '#fa8c16',
+                  children: (
+                    <div>
+                      <Text strong>社交媒体短视频</Text>
+                      <div><Text type="secondary" style={{ fontSize: 12 }}>AI 分析中 · 场景检测</Text></div>
+                      <Text type="secondary" style={{ fontSize: 11 }}>昨天</Text>
+                    </div>
+                  )
+                },
+                {
+                  color: '#667eea',
+                  children: (
+                    <div>
+                      <Text strong>品牌故事片</Text>
+                      <div><Text type="secondary" style={{ fontSize: 12 }}>项目创建</Text></div>
+                      <Text type="secondary" style={{ fontSize: 11 }}>3 天前</Text>
+                    </div>
+                  )
+                },
+              ]}
             />
           </Card>
         </Col>
       </Row>
-      
-      {/* 项目列表 */}
+
+      {/* AI 模型支持 */}
       <Card 
-        title={
-          <div className={styles.sectionHeader}>
-            <Text strong style={{ fontSize: 18 }}>
-              <VideoCameraOutlined /> 我的项目
-            </Text>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleCreateProject}
-            >
-              创建新项目
-            </Button>
-          </div>
-        }
-        className={`${styles.sectionCard} ${isDarkMode ? styles.darkCard : ''}`}
-        bordered={false}
+        bordered={false} 
+        style={{ borderRadius: 10, marginTop: 16 }}
+        styles={{ body: { padding: '16px 24px' } }}
       >
-        <Spin spinning={loading}>
-          {projects.length === 0 ? (
-            <Empty
-              description="暂无项目，点击「创建新项目」开始使用"
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-            >
-              <Button 
-                type="primary" 
-                icon={<PlusOutlined />} 
-                onClick={handleCreateProject}
-              >
-                创建新项目
-              </Button>
-            </Empty>
-          ) : (
-            <List
-              grid={{ gutter: 24, xs: 1, sm: 2, md: 3, lg: 4 }}
-              dataSource={projects}
-              renderItem={(project) => (
-                <List.Item>
-                  <Card
-                    className={`${styles.projectCard} ${isDarkMode ? styles.darkProjectCard : ''}`}
-                    hoverable
-                    onClick={() => handleViewProject(project.id)}
-                    cover={
-                      project.thumbnail && (
-                        <div className={styles.projectThumbnail}>
-                          <img alt={project.name} src={project.thumbnail} width={100} style={{width: 150, height:150}}/>
-                        </div>
-                      )
-                    }
-                    actions={[
-                      <Button 
-                        key="edit" 
-                        type="text" 
-                        icon={<EditOutlined />} 
-                        onClick={(e) => handleEditProject(project.id, e)}
-                      />,
-                      <Button 
-                        key="scissors" 
-                        type="text" 
-                        icon={<VideoCameraOutlined />} 
-                        onClick={(e) => handleOpenEditor(project.id, e)}
-                      />,
-                      <Button 
-                        key="delete" 
-                        type="text" 
-                        danger 
-                        icon={<DeleteOutlined />} 
-                        onClick={(e) => handleDeleteProject(project.id, e)}
-                      />
-                    ]}
-                  >
-                    <Card.Meta
-                      title={
-                        <div className={styles.projectTitle}>
-                          <span>{project.name}</span>
-                          <Tag
-                            color={
-                              project.status === 'draft' ? 'blue' : 
-                              project.status === 'processing' ? 'orange' : 'green'
-                            }
-                            className={styles.statusTag}
-                          >
-                            {project.status === 'draft' ? '草稿' : 
-                             project.status === 'processing' ? '处理中' : '已完成'}
-                          </Tag>
-                        </div>
-                      }
-                      description={
-                        <>
-                          <Text ellipsis style={{ marginBottom: 8, display: 'block' }}>
-                            {project.description}
-                          </Text>
-                          <Text type="secondary" style={{ fontSize: 12 }}>
-                            更新于: {formatDate(project.updatedAt)}
-                          </Text>
-                        </>
-                      }
-                    />
-                  </Card>
-                </List.Item>
-              )}
-            />
-          )}
-        </Spin>
-      </Card>
-      
-      {/* 特性展示 */}
-      <div className={styles.features}>
-        <Title level={3} className={styles.sectionTitle}>
-          <RocketOutlined /> 强大功能
-        </Title>
-        <Row gutter={[24, 24]}>
-          <Col xs={24} sm={12} md={6}>
-            <Card 
-              className={`${styles.featureCard} ${isDarkMode ? styles.darkCard : ''}`}
-              bordered={false}
-            >
-              <div 
-                className={styles.featureIcon} 
-                style={{ color: '#1890ff', fontSize: 36 }}
-              >
-                <ThunderboltOutlined />
-              </div>
-              <Title level={4} className={styles.featureTitle}>智能分析</Title>
-              <Paragraph className={styles.featureDesc}>
-                基于AI技术分析视频内容，智能识别关键场景和情感变化
-              </Paragraph>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card 
-              className={`${styles.featureCard} ${isDarkMode ? styles.darkCard : ''}`}
-              bordered={false}
-            >
-              <div 
-                className={styles.featureIcon} 
-                style={{ color: '#722ed1', fontSize: 36 }}
-              >
-                <CodeOutlined />
-              </div>
-              <Title level={4} className={styles.featureTitle}>脚本生成</Title>
-              <Paragraph className={styles.featureDesc}>
-                自动生成专业短视频脚本，支持多种风格和平台定制
-              </Paragraph>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card 
-              className={`${styles.featureCard} ${isDarkMode ? styles.darkCard : ''}`}
-              bordered={false}
-            >
-              <div 
-                className={styles.featureIcon} 
-                style={{ color: '#13c2c2', fontSize: 36 }}
-              >
-                <CloudOutlined />
-              </div>
-              <Title level={4} className={styles.featureTitle}>一键剪辑</Title>
-              <Paragraph className={styles.featureDesc}>
-                根据脚本一键生成精美短视频，无需复杂操作
-              </Paragraph>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card 
-              className={`${styles.featureCard} ${isDarkMode ? styles.darkCard : ''}`}
-              bordered={false}
-            >
-              <div 
-                className={styles.featureIcon} 
-                style={{ color: '#fa8c16', fontSize: 36 }}
-              >
-                <BulbOutlined />
-              </div>
-              <Title level={4} className={styles.featureTitle}>创意辅助</Title>
-              <Paragraph className={styles.featureDesc}>
-                AI提供创意建议和创作灵感，帮助提升内容质量
-              </Paragraph>
-            </Card>
-          </Col>
-        </Row>
-      </div>
-      
-      {/* 工作流程 */}
-      <div className={styles.workflow}>
-        <Title level={3} className={styles.sectionTitle}>
-          <FireOutlined /> 使用流程
-        </Title>
-        <div className={styles.steps}>
-          <Row gutter={[24, 24]}>
-            <Col xs={24} sm={12} md={6}>
-              <Card 
-                className={`${styles.stepCard} ${isDarkMode ? styles.darkCard : ''}`}
-                bordered={false}
-              >
-                <div className={styles.stepNumber}>1</div>
-                <div className={styles.stepIcon} style={{ fontSize: 32 }}>
-                  <CameraOutlined />
-                </div>
-                <Title level={4}>上传视频</Title>
-                <Paragraph>上传您的原始视频素材</Paragraph>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Card 
-                className={`${styles.stepCard} ${isDarkMode ? styles.darkCard : ''}`}
-                bordered={false}
-              >
-                <div className={styles.stepNumber}>2</div>
-                <div className={styles.stepIcon} style={{ fontSize: 32 }}>
-                  <ThunderboltOutlined />
-                </div>
-                <Title level={4}>AI分析</Title>
-                <Paragraph>智能分析视频内容和结构</Paragraph>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Card 
-                className={`${styles.stepCard} ${isDarkMode ? styles.darkCard : ''}`}
-                bordered={false}
-              >
-                <div className={styles.stepNumber}>3</div>
-                <div className={styles.stepIcon} style={{ fontSize: 32 }}>
-                  <CodeOutlined />
-                </div>
-                <Title level={4}>自动生成脚本</Title>
-                <Paragraph>基于分析生成专业短视频脚本</Paragraph>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Card 
-                className={`${styles.stepCard} ${isDarkMode ? styles.darkCard : ''}`}
-                bordered={false}
-              >
-                <div className={styles.stepNumber}>4</div>
-                <div className={styles.stepIcon} style={{ fontSize: 32 }}>
-                  <ToolOutlined />
-                </div>
-                <Title level={4}>智能剪辑</Title>
-                <Paragraph>一键生成精美短视频成品</Paragraph>
-              </Card>
-            </Col>
-          </Row>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+          <Text type="secondary">
+            <ThunderboltOutlined /> 支持的 AI 模型
+          </Text>
+          <Space size={6} wrap>
+            {['GPT-5', 'Claude 4', 'ERNIE 5.0', 'Qwen 3.5', 'GLM-5', 'Kimi 2.5', 'Spark 5.0', 'MiniMax M2.5'].map(m => (
+              <Tag key={m} style={{ margin: 0, borderRadius: 4, fontSize: 11 }}>{m}</Tag>
+            ))}
+          </Space>
         </div>
-      </div>
-      
-      {/* 行动召唤区 */}
-      <Card 
-        className={`${styles.cta} ${isDarkMode ? styles.darkCta : ''}`}
-        bordered={false}
-      >
-        <Title level={3}>准备好开始创作了吗？</Title>
-        <Paragraph className={styles.ctaText}>
-          使用BlazeCut，让AI为您的创作提供灵感和效率
-        </Paragraph>
-        <Button 
-          type="primary" 
-          size="large" 
-          icon={<PlusOutlined />} 
-          onClick={handleCreateProject}
-          className={styles.ctaButton}
-        >
-          立即创建项目
-        </Button>
       </Card>
-      
-      {/* 页脚 */}
-      <div className={styles.footer}>
-        <Divider />
-        <Space split={<Divider type="vertical" />}>
-          <Text type="secondary">© 2025 BlazeCut</Text>
-          <Text type="secondary">基于 Tauri 和 React 构建</Text>
-          <a href="https://github.com/agions/blazecut" target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
-        </Space>
-      </div>
     </div>
   );
 };
 
-export default Home; 
+export default Home;

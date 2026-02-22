@@ -1,175 +1,362 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Button, List, Typography, Space, Empty, Modal, message, Tag } from 'antd';
-import { 
-  PlusOutlined, 
-  EditOutlined, 
-  DeleteOutlined, 
-  EyeOutlined,
-  VideoCameraOutlined, 
-  ClockCircleOutlined 
-} from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useStore } from '@/store';
-import { ensureAppDataDir } from '@/services/tauriService';
-import { formatDate, formatDuration } from '@/utils/format';
-import styles from './Projects.module.less';
+import {
+  Typography, Button, Card, Row, Col, Input, Select,
+  Table, Tag, Space, Modal, message, Empty, Tabs,
+  Dropdown, Avatar, Progress, Tooltip
+} from 'antd';
+import {
+  PlusOutlined,
+  SearchOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  PlayCircleOutlined,
+  EllipsisOutlined,
+  AppstoreOutlined,
+  UnorderedListOutlined,
+  FilterOutlined,
+  SortAscendingOutlined,
+  VideoCameraOutlined,
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+  ExportOutlined,
+  FolderOpenOutlined,
+} from '@ant-design/icons';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
+const { Search } = Input;
 
-const Projects: React.FC = () => {
+interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+  status: 'draft' | 'processing' | 'completed' | 'exported';
+  thumbnail?: string;
+  videoCount: number;
+  scriptCount: number;
+  progress: number;
+}
+
+const ProjectManager: React.FC = () => {
   const navigate = useNavigate();
-  const { projects, deleteProject } = useStore();
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchText, setSearchText] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    const initializeData = async () => {
-      try {
-        // 确保应用数据目录存在
-        await ensureAppDataDir();
-        setLoading(false);
-      } catch (error) {
-        console.error('初始化失败:', error);
-        message.error('初始化失败');
-        setLoading(false);
-      }
-    };
-
-    initializeData();
+    const timer = setTimeout(() => {
+      setProjects([
+        {
+          id: '1', name: '产品宣传视频', description: '公司新产品 Q1 宣传短视频',
+          createdAt: '2026-02-20T08:00:00Z', updatedAt: '2026-02-22T10:30:00Z',
+          status: 'completed', videoCount: 3, scriptCount: 2, progress: 100,
+        },
+        {
+          id: '2', name: '社交媒体短视频', description: '抖音和小红书推广内容系列',
+          createdAt: '2026-02-18T12:00:00Z', updatedAt: '2026-02-21T09:15:00Z',
+          status: 'processing', videoCount: 5, scriptCount: 3, progress: 65,
+        },
+        {
+          id: '3', name: '教学视频 EP01-05', description: '软件使用教程系列',
+          createdAt: '2026-02-15T15:45:00Z', updatedAt: '2026-02-19T14:20:00Z',
+          status: 'draft', videoCount: 1, scriptCount: 0, progress: 15,
+        },
+        {
+          id: '4', name: '品牌故事片', description: '企业品牌故事宣传片',
+          createdAt: '2026-02-10T09:00:00Z', updatedAt: '2026-02-12T16:00:00Z',
+          status: 'exported', videoCount: 2, scriptCount: 1, progress: 100,
+        },
+      ]);
+      setLoading(false);
+    }, 500);
+    return () => clearTimeout(timer);
   }, []);
+
+  const statusConfig: Record<string, { color: string; text: string }> = {
+    draft: { color: 'default', text: '草稿' },
+    processing: { color: 'processing', text: '制作中' },
+    completed: { color: 'success', text: '已完成' },
+    exported: { color: 'purple', text: '已导出' },
+  };
+
+  const filteredProjects = projects.filter(p => {
+    const matchSearch = !searchText || p.name.includes(searchText) || p.description?.includes(searchText);
+    const matchStatus = statusFilter === 'all' || p.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
 
   const handleDelete = (id: string) => {
     Modal.confirm({
       title: '确认删除',
-      content: '确定要删除此项目吗？此操作不可撤销。',
+      content: '删除后无法恢复，确定要删除此项目吗？',
       okText: '删除',
       okType: 'danger',
       cancelText: '取消',
-      onOk: async () => {
-        try {
-          deleteProject(id);
-          message.success('项目已删除');
-        } catch (error) {
-          console.error('删除项目失败:', error);
-          message.error('删除项目失败');
-        }
+      onOk: () => {
+        setProjects(prev => prev.filter(p => p.id !== id));
+        message.success('项目已删除');
       }
     });
   };
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <Title level={2}>项目列表</Title>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => navigate('/projects/new')}
-        >
-          创建新项目
-        </Button>
-      </div>
+  const formatDate = (d: string) => {
+    const date = new Date(d);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`;
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`;
+    if (diff < 604800000) return `${Math.floor(diff / 86400000)} 天前`;
+    return date.toLocaleDateString('zh-CN');
+  };
 
-      {projects.length === 0 ? (
-        <Card>
-          <Empty
-            description="暂无项目"
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
+  const projectActions = (project: Project) => ({
+    items: [
+      { key: 'edit', label: '编辑项目', icon: <EditOutlined />, onClick: () => navigate(`/project/edit/${project.id}`) },
+      { key: 'editor', label: '进入工作台', icon: <PlayCircleOutlined />, onClick: () => navigate(`/editor/${project.id}`) },
+      { key: 'export', label: '导出', icon: <ExportOutlined /> },
+      { type: 'divider' as const },
+      { key: 'delete', label: '删除', icon: <DeleteOutlined />, danger: true, onClick: () => handleDelete(project.id) },
+    ]
+  });
+
+  // 网格视图
+  const GridView = () => (
+    <Row gutter={[16, 16]}>
+      {/* 创建项目卡片 */}
+      <Col xs={24} sm={12} md={8} lg={6}>
+        <Card
+          hoverable
+          onClick={() => navigate('/project/new')}
+          style={{ 
+            borderRadius: 10, height: 220, 
+            border: '2px dashed rgba(102, 126, 234, 0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+          styles={{ body: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' } }}
+        >
+          <div style={{
+            width: 48, height: 48, borderRadius: 12,
+            background: 'linear-gradient(135deg, #667eea15, #764ba215)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 22, color: '#667eea', marginBottom: 12,
+          }}>
+            <PlusOutlined />
+          </div>
+          <Text strong style={{ color: '#667eea' }}>创建新项目</Text>
+        </Card>
+      </Col>
+
+      {filteredProjects.map(project => (
+        <Col xs={24} sm={12} md={8} lg={6} key={project.id}>
+          <Card
+            hoverable
+            onClick={() => navigate(`/project/${project.id}`)}
+            style={{ borderRadius: 10, height: 220, overflow: 'hidden' }}
+            styles={{ body: { padding: 16, height: '100%', display: 'flex', flexDirection: 'column' } }}
           >
+            {/* 顶部：状态和菜单 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+              <Tag color={statusConfig[project.status].color} style={{ margin: 0, borderRadius: 4 }}>
+                {statusConfig[project.status].text}
+              </Tag>
+              <Dropdown menu={projectActions(project)} trigger={['click']}>
+                <Button type="text" icon={<EllipsisOutlined />} size="small" onClick={e => e.stopPropagation()} />
+              </Dropdown>
+            </div>
+
+            {/* 项目名 */}
+            <Title level={5} ellipsis style={{ margin: '0 0 4px' }}>{project.name}</Title>
+            <Text type="secondary" ellipsis style={{ fontSize: 12, marginBottom: 12 }}>{project.description}</Text>
+
+            {/* 进度 */}
+            <Progress 
+              percent={project.progress} 
+              size="small" 
+              strokeColor={{ from: '#667eea', to: '#764ba2' }}
+              style={{ marginBottom: 8 }}
+            />
+
+            {/* 底部信息 */}
+            <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Space size={12}>
+                <Tooltip title="视频数"><Text type="secondary" style={{ fontSize: 11 }}><VideoCameraOutlined /> {project.videoCount}</Text></Tooltip>
+                <Tooltip title="脚本数"><Text type="secondary" style={{ fontSize: 11 }}><FolderOpenOutlined /> {project.scriptCount}</Text></Tooltip>
+              </Space>
+              <Text type="secondary" style={{ fontSize: 11 }}>{formatDate(project.updatedAt)}</Text>
+            </div>
+          </Card>
+        </Col>
+      ))}
+
+      {filteredProjects.length === 0 && !loading && (
+        <Col span={24}>
+          <Empty description="暂无匹配的项目" style={{ padding: 60 }} />
+        </Col>
+      )}
+    </Row>
+  );
+
+  // 列表视图
+  const ListView = () => (
+    <Table
+      dataSource={filteredProjects}
+      rowKey="id"
+      loading={loading}
+      pagination={{ pageSize: 10 }}
+      onRow={(record) => ({ onClick: () => navigate(`/project/${record.id}`), style: { cursor: 'pointer' } })}
+      columns={[
+        {
+          title: '项目名称',
+          dataIndex: 'name',
+          render: (name: string, record: Project) => (
+            <div>
+              <Text strong>{name}</Text>
+              <div><Text type="secondary" style={{ fontSize: 12 }}>{record.description}</Text></div>
+            </div>
+          )
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+          width: 100,
+          render: (status: string) => (
+            <Tag color={statusConfig[status].color}>{statusConfig[status].text}</Tag>
+          )
+        },
+        {
+          title: '进度',
+          dataIndex: 'progress',
+          width: 140,
+          render: (progress: number) => (
+            <Progress percent={progress} size="small" strokeColor={{ from: '#667eea', to: '#764ba2' }} />
+          )
+        },
+        {
+          title: '素材',
+          width: 100,
+          render: (_: any, record: Project) => (
+            <Space size={8}>
+              <Text type="secondary" style={{ fontSize: 12 }}><VideoCameraOutlined /> {record.videoCount}</Text>
+              <Text type="secondary" style={{ fontSize: 12 }}><FolderOpenOutlined /> {record.scriptCount}</Text>
+            </Space>
+          )
+        },
+        {
+          title: '更新时间',
+          dataIndex: 'updatedAt',
+          width: 120,
+          render: (d: string) => <Text type="secondary" style={{ fontSize: 12 }}>{formatDate(d)}</Text>
+        },
+        {
+          title: '操作',
+          width: 120,
+          render: (_: any, record: Project) => (
+            <Space>
+              <Tooltip title="进入工作台">
+                <Button type="text" icon={<PlayCircleOutlined />} onClick={e => { e.stopPropagation(); navigate(`/editor/${record.id}`); }} />
+              </Tooltip>
+              <Dropdown menu={projectActions(record)} trigger={['click']}>
+                <Button type="text" icon={<EllipsisOutlined />} onClick={e => e.stopPropagation()} />
+              </Dropdown>
+            </Space>
+          )
+        },
+      ]}
+    />
+  );
+
+  return (
+    <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      {/* 工具栏 */}
+      <Card bordered={false} style={{ borderRadius: 10, marginBottom: 16 }} styles={{ body: { padding: '12px 20px' } }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <Space size={12}>
+            <Search
+              placeholder="搜索项目..."
+              allowClear
+              style={{ width: 240 }}
+              onSearch={v => setSearchText(v)}
+              onChange={e => !e.target.value && setSearchText('')}
+            />
+            <Select
+              value={statusFilter}
+              onChange={setStatusFilter}
+              style={{ width: 120 }}
+              options={[
+                { value: 'all', label: '全部状态' },
+                { value: 'draft', label: '草稿' },
+                { value: 'processing', label: '制作中' },
+                { value: 'completed', label: '已完成' },
+                { value: 'exported', label: '已导出' },
+              ]}
+            />
+          </Space>
+          
+          <Space size={8}>
+            <Button.Group>
+              <Tooltip title="网格视图">
+                <Button 
+                  icon={<AppstoreOutlined />} 
+                  type={viewMode === 'grid' ? 'primary' : 'default'}
+                  onClick={() => setViewMode('grid')}
+                />
+              </Tooltip>
+              <Tooltip title="列表视图">
+                <Button 
+                  icon={<UnorderedListOutlined />}
+                  type={viewMode === 'list' ? 'primary' : 'default'}
+                  onClick={() => setViewMode('list')}
+                />
+              </Tooltip>
+            </Button.Group>
             <Button 
               type="primary" 
-              icon={<PlusOutlined />}
-              onClick={() => navigate('/projects/new')}
+              icon={<PlusOutlined />} 
+              onClick={() => navigate('/project/new')}
+              style={{ 
+                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                border: 'none', borderRadius: 6,
+              }}
             >
-              创建新项目
+              新建项目
             </Button>
-          </Empty>
-        </Card>
-      ) : (
-        <List
-          grid={{ 
-            gutter: 16, 
-            xs: 1, 
-            sm: 1, 
-            md: 2, 
-            lg: 3, 
-            xl: 3, 
-            xxl: 4 
-          }}
-          dataSource={projects}
-          renderItem={(project) => (
-            <List.Item>
-              <Card
-                hoverable
-                className={styles.projectCard}
-                cover={
-                  <div className={styles.cardCover}>
-                    <VideoCameraOutlined className={styles.cardIcon} />
-                  </div>
-                }
-                actions={[
-                  <Button 
-                    icon={<EyeOutlined />} 
-                    type="text"
-                    onClick={() => navigate(`/projects/${project.id}`)}
-                  >
-                    查看
-                  </Button>,
-                  <Button 
-                    icon={<EditOutlined />} 
-                    type="text"
-                    onClick={() => navigate(`/projects/${project.id}/edit`)}
-                  >
-                    编辑
-                  </Button>,
-                  <Button 
-                    icon={<DeleteOutlined />} 
-                    type="text" 
-                    danger
-                    onClick={() => handleDelete(project.id)}
-                  >
-                    删除
-                  </Button>
-                ]}
-              >
-                <Card.Meta
-                  title={project.name}
-                  description={
-                    <Space direction="vertical" size={4}>
-                      {project.description && (
-                        <Text ellipsis style={{ maxWidth: '100%' }}>
-                          {project.description}
-                        </Text>
-                      )}
-                      <div className={styles.cardInfo}>
-                        <Space>
-                          <ClockCircleOutlined />
-                          <Text type="secondary">
-                            创建于: {formatDate(project.createdAt)}
-                          </Text>
-                        </Space>
-                      </div>
-                      <div>
-                        <Space size={[0, 8]} wrap>
-                          <Tag color="blue">
-                            {project.scripts?.length || 0} 个脚本
-                          </Tag>
-                          {project.analysis?.duration && (
-                            <Tag color="green">
-                              {formatDuration(project.analysis.duration)}
-                            </Tag>
-                          )}
-                        </Space>
-                      </div>
-                    </Space>
-                  }
-                />
-              </Card>
-            </List.Item>
-          )}
-        />
-      )}
+          </Space>
+        </div>
+      </Card>
+
+      {/* 项目统计 */}
+      <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
+        {[
+          { label: '全部', value: projects.length, color: '#667eea', filter: 'all' },
+          { label: '草稿', value: projects.filter(p => p.status === 'draft').length, color: '#8c8c8c', filter: 'draft' },
+          { label: '制作中', value: projects.filter(p => p.status === 'processing').length, color: '#1890ff', filter: 'processing' },
+          { label: '已完成', value: projects.filter(p => p.status === 'completed').length, color: '#52c41a', filter: 'completed' },
+          { label: '已导出', value: projects.filter(p => p.status === 'exported').length, color: '#722ed1', filter: 'exported' },
+        ].map((item, idx) => (
+          <Col key={idx}>
+            <Tag
+              style={{ 
+                cursor: 'pointer', padding: '4px 12px', borderRadius: 6, fontSize: 13,
+                background: statusFilter === item.filter ? `${item.color}15` : undefined,
+                borderColor: statusFilter === item.filter ? item.color : undefined,
+                color: statusFilter === item.filter ? item.color : undefined,
+              }}
+              onClick={() => setStatusFilter(item.filter)}
+            >
+              {item.label} <Text strong style={{ color: 'inherit' }}>{item.value}</Text>
+            </Tag>
+          </Col>
+        ))}
+      </Row>
+
+      {/* 内容区 */}
+      {viewMode === 'grid' ? <GridView /> : <ListView />}
     </div>
   );
 };
 
-export default Projects; 
+export default ProjectManager;

@@ -37,14 +37,14 @@ const Footer = () => (
   <div className={styles.footer}>
     <div className={styles.footerContent}>
       <div className={styles.footerLinks}>
-        <a href="https://github.com/agions/blazecut" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/agions/clipflow" target="_blank" rel="noopener noreferrer">
           <GithubOutlined /> GitHub
         </a>
         <a href="/privacy" target="_blank">隐私政策</a>
         <a href="/terms" target="_blank">使用条款</a>
       </div>
       <div className={styles.copyright}>
-        <Text type="secondary">BlazeCut © {new Date().getFullYear()} Created by Agions</Text>
+        <Text type="secondary">ClipFlow © {new Date().getFullYear()} Created by Agions</Text>
       </div>
     </div>
   </div>
@@ -162,7 +162,7 @@ const MainLayout: React.FC = () => {
     if (path.startsWith('/scripts')) return '剧本管理';
     if (path.startsWith('/templates')) return '模板中心';
     if (path.startsWith('/settings')) return '系统设置';
-    return 'BlazeCut';
+    return 'ClipFlow';
   };
 
   const renderMenu = () => (
@@ -195,7 +195,7 @@ const MainLayout: React.FC = () => {
           )}
           <div className={styles.logo} onClick={() => navigate('/')}>
             <FireOutlined className={styles.logoIcon} />
-            <span className={styles.logoText}>BlazeCut</span>
+            <span className={styles.logoText}>ClipFlow</span>
           </div>
           {!isMobile && (
             <div className={styles.pageTitle}>
@@ -255,7 +255,7 @@ const MainLayout: React.FC = () => {
             title={
               <div className={styles.drawerHeader}>
                 <FireOutlined className={styles.logoIcon} />
-                <span className={styles.logoText}>BlazeCut</span>
+                <span className={styles.logoText}>ClipFlow</span>
               </div>
             }
             placement="left"
