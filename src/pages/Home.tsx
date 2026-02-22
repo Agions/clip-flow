@@ -266,7 +266,7 @@ const Home = () => {
             <ThunderboltOutlined /> 支持的 AI 模型
           </Text>
           <Space size={6} wrap>
-            {['GPT-5', 'Claude 4', 'ERNIE 5.0', 'Qwen 3.5', 'GLM-5', 'Kimi 2.5', 'Spark 5.0', 'MiniMax M2.5'].map(m => (
+            {['GPT-5.2', 'Claude Opus 4.6', 'Gemini 3', 'ERNIE 5.5', 'Qwen 3.5', 'GLM-5', 'Kimi k2', 'Spark X1'].map(m => (
               <Tag key={m} style={{ margin: 0, borderRadius: 4, fontSize: 11 }}>{m}</Tag>
             ))}
           </Space>

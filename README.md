@@ -169,13 +169,13 @@ graph TB
 | 提供商 | 模型 | 特点 |
 |--------|------|------|
 | **OpenAI** | GPT-5 | 综合能力最强 |
-| **Anthropic** | Claude 4 | 长文本理解优秀 |
+| **Anthropic** | Claude Opus 4.6 | 长文本理解优秀 |
 | **Google** | Gemini 3 | 多模态能力 |
-| **百度** | ERNIE 5.0 | 中文优化 |
+| **百度** | ERNIE 5.5 | 中文优化 |
 | **阿里** | Qwen 3.5 | 性价比高 |
 | **智谱** | GLM-5 | 多模态理解 |
-| **讯飞** | Spark 5.0 | 语音集成 |
-| **MiniMax** | M2.5 | 长文本生成 |
+| **讯飞** | Spark X1 | 语音集成 |
+| **MiniMax** | MiniMax-01 | 长文本生成 |
 
 ---
 

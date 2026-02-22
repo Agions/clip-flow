@@ -57,8 +57,8 @@ const models: AIModel[] = [
     avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/2048px-ChatGPT_logo.svg.png'
   },
   {
-    id: 'claude-3-opus',
-    name: 'Claude 3 Opus',
+    id: 'claude-opus-4-6',
+    name: 'Claude Opus 4.6',
     provider: 'anthropic',
     category: ['text', 'code', 'image'],
     description: 'Anthropic最强大的多模态模型，具有卓越理解力',
@@ -68,8 +68,8 @@ const models: AIModel[] = [
     avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF4BPGvrUHBwGbFiLZNlIRU3mp09a4KTMYoQD-MCc4XDwbPGUu'
   },
   {
-    id: 'claude-3-sonnet',
-    name: 'Claude 3 Sonnet',
+    id: 'claude-sonnet-4-6',
+    name: 'Claude Sonnet 4.6',
     provider: 'anthropic',
     category: ['text', 'code', 'image'],
     description: '平衡性能与速度的Claude模型，多任务处理能力强',
@@ -90,7 +90,7 @@ const models: AIModel[] = [
   },
   {
     id: 'ernie-4',
-    name: 'ERNIE 4.0',
+    name: 'ERNIE 5.5',
     provider: 'baidu',
     category: ['text', 'code'],
     description: '百度最新自然语言理解模型，擅长中文处理',
@@ -120,7 +120,7 @@ const models: AIModel[] = [
   },
   {
     id: 'chatglm4',
-    name: 'ChatGLM4',
+    name: 'GLM-5',
     provider: 'zhipu',
     category: ['text', 'code', 'image'],
     description: '清华&智谱AI推出的开源双语对话模型，优化中英文处理',

@@ -119,8 +119,8 @@ export const AI_MODELS: AIModel[] = [
   },
   // Anthropic 模型
   {
-    id: 'claude-3-opus',
-    name: 'Claude 3 Opus',
+    id: 'claude-opus-4-6',
+    name: 'Claude Opus 4.6',
     provider: 'anthropic',
     category: ['text', 'code', 'image'],
     description: 'Anthropic 最强大的多模态模型',
@@ -131,8 +131,8 @@ export const AI_MODELS: AIModel[] = [
     pricing: { input: 0.015, output: 0.075, unit: '1K tokens' }
   },
   {
-    id: 'claude-3-sonnet',
-    name: 'Claude 3.5 Sonnet',
+    id: 'claude-sonnet-4-6',
+    name: 'Claude Sonnet 4.6',
     provider: 'anthropic',
     category: ['text', 'code', 'image'],
     description: '平衡性能与速度',
@@ -168,7 +168,7 @@ export const AI_MODELS: AIModel[] = [
   // 百度模型
   {
     id: 'ernie-4',
-    name: 'ERNIE 4.0',
+    name: 'ERNIE 5.5',
     provider: 'baidu',
     category: ['text', 'code'],
     description: '百度最新自然语言理解模型',
@@ -179,7 +179,7 @@ export const AI_MODELS: AIModel[] = [
   },
   {
     id: 'ernie-speed',
-    name: 'ERNIE Speed',
+    name: 'ERNIE Speed 5',
     provider: 'baidu',
     category: ['text'],
     description: '轻量级高速模型',
@@ -214,8 +214,8 @@ export const AI_MODELS: AIModel[] = [
   },
   // 智谱模型
   {
-    id: 'glm-4',
-    name: 'GLM-4',
+    id: 'glm-5',
+    name: 'GLM-5',
     provider: 'zhipu',
     category: ['text', 'code'],
     description: '智谱最新大模型',
@@ -252,9 +252,9 @@ export const AI_MODELS: AIModel[] = [
 
 // 模型推荐配置
 export const MODEL_RECOMMENDATIONS: Record<string, string[]> = {
-  script: ['gpt-5', 'claude-3-opus', 'qwen-max', 'gemini-3-pro'],
+  script: ['gpt-5', 'claude-opus-4-6', 'qwen-max', 'gemini-3-pro'],
   analysis: ['gemini-3-pro', 'gemini-3-flash', 'gpt-5', 'qwen-max'],
-  code: ['claude-3-sonnet', 'gpt-5-mini', 'qwen-plus', 'glm-4'],
+  code: ['claude-sonnet-4-6', 'gpt-5-mini', 'qwen-plus', 'glm-5'],
   fast: ['gpt-5-mini', 'gemini-3-flash', 'qwen-plus', 'ernie-speed']
 };
 
