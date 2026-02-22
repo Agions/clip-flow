@@ -170,7 +170,7 @@ graph TB
 |--------|------|------|
 | **OpenAI** | GPT-5 | 综合能力最强 |
 | **Anthropic** | Claude 4 | 长文本理解优秀 |
-| **Google** | Gemini 2 | 多模态能力 |
+| **Google** | Gemini 3 | 多模态能力 |
 | **百度** | ERNIE 5.0 | 中文优化 |
 | **阿里** | Qwen 3.5 | 性价比高 |
 | **智谱** | GLM-5 | 多模态理解 |

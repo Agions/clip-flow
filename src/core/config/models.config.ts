@@ -143,8 +143,8 @@ export const AI_MODELS: AIModel[] = [
   },
   // Google 模型
   {
-    id: 'gemini-1.5-pro',
-    name: 'Gemini 1.5 Pro',
+    id: 'gemini-3-pro',
+    name: 'Gemini 3 Pro',
     provider: 'google',
     category: ['text', 'code', 'image', 'video'],
     description: 'Google 最先进的多模态模型，支持视频分析',
@@ -155,8 +155,8 @@ export const AI_MODELS: AIModel[] = [
     pricing: { input: 0.0035, output: 0.0105, unit: '1K tokens' }
   },
   {
-    id: 'gemini-1.5-flash',
-    name: 'Gemini 1.5 Flash',
+    id: 'gemini-3-flash',
+    name: 'Gemini 3 Flash',
     provider: 'google',
     category: ['text', 'code', 'image', 'video'],
     description: '快速高效的多模态模型',
@@ -252,10 +252,10 @@ export const AI_MODELS: AIModel[] = [
 
 // 模型推荐配置
 export const MODEL_RECOMMENDATIONS: Record<string, string[]> = {
-  script: ['gpt-5', 'claude-3-opus', 'qwen-max', 'gemini-1.5-pro'],
-  analysis: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gpt-5', 'qwen-max'],
+  script: ['gpt-5', 'claude-3-opus', 'qwen-max', 'gemini-3-pro'],
+  analysis: ['gemini-3-pro', 'gemini-3-flash', 'gpt-5', 'qwen-max'],
   code: ['claude-3-sonnet', 'gpt-5-mini', 'qwen-plus', 'glm-4'],
-  fast: ['gpt-5-mini', 'gemini-1.5-flash', 'qwen-plus', 'ernie-speed']
+  fast: ['gpt-5-mini', 'gemini-3-flash', 'qwen-plus', 'ernie-speed']
 };
 
 // 获取模型配置

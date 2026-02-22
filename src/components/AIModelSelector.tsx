@@ -78,8 +78,8 @@ const models: AIModel[] = [
     avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF4BPGvrUHBwGbFiLZNlIRU3mp09a4KTMYoQD-MCc4XDwbPGUu'
   },
   {
-    id: 'gemini-1.5-pro',
-    name: 'Gemini 1.5 Pro',
+    id: 'gemini-3-pro',
+    name: 'Gemini 3 Pro',
     provider: 'google',
     category: ['text', 'code', 'image', 'video'],
     description: 'Google最先进的多模态模型，支持视频分析',
