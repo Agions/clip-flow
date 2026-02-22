@@ -4,15 +4,18 @@
 }
 
 .controllerCard {
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.03);
   overflow: hidden;
-  
+  background: white;
+
   :global(.ant-card-head) {
-    padding: 12px 20px;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    background: linear-gradient(180deg, rgba(24, 144, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
   }
-  
+
   :global(.ant-card-body) {
     padding: 20px;
   }
@@ -21,12 +24,12 @@
 .panel {
   :global(.ant-collapse-header) {
     font-weight: 500;
-    
+
     &:hover {
       background-color: rgba(0, 0, 0, 0.02);
     }
   }
-  
+
   :global(.ant-collapse-content-box) {
     padding: 16px !important;
   }
@@ -34,7 +37,7 @@
 
 .formItem {
   margin-bottom: 16px;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -106,11 +109,11 @@
   color: rgba(0, 0, 0, 0.45);
   background-color: #fafafa;
   border-radius: 8px;
-  
+
   p {
     margin: 0;
     line-height: 1.8;
-    
+
     &:first-child {
       font-weight: 500;
       font-size: 16px;
@@ -124,11 +127,11 @@
   border-radius: 8px;
   border: 1px solid #f0f0f0;
   transition: all 0.3s ease;
-  
+
   &:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
-  
+
   &.completed {
     background-color: #f6ffed;
     border-color: #b7eb8f;
@@ -148,7 +151,7 @@
 
 .batchItemName {
   font-weight: 500;
-  
+
   .batchNumber {
     color: rgba(0, 0, 0, 0.45);
     margin-right: 4px;
@@ -158,8 +161,8 @@
 .batchItemActions {
   display: flex;
   align-items: center;
-  
-  > * {
+
+  >* {
     margin-left: 8px;
   }
 }
@@ -168,8 +171,8 @@
   display: flex;
   font-size: 12px;
   color: rgba(0, 0, 0, 0.65);
-  
-  > div {
+
+  >div {
     margin-right: 16px;
   }
 }
@@ -179,24 +182,24 @@
   .controllerCard {
     background-color: #1f1f1f;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    
+
     :global(.ant-card-head) {
       border-bottom-color: #303030;
     }
   }
-  
+
   .formLabel {
     color: rgba(255, 255, 255, 0.85);
   }
-  
+
   .optionDescription {
     color: rgba(255, 255, 255, 0.45);
   }
-  
+
   .switchDescription {
     color: rgba(255, 255, 255, 0.45);
   }
-  
+
   .panel {
     :global(.ant-collapse-header) {
       &:hover {
@@ -204,36 +207,36 @@
       }
     }
   }
-  
+
   .batchProgress {
     background-color: #141414;
   }
-  
+
   .batchStatus {
     color: rgba(255, 255, 255, 0.65);
   }
-  
+
   .emptyBatch {
     color: rgba(255, 255, 255, 0.45);
     background-color: #141414;
   }
-  
+
   .batchItem {
     border-color: #303030;
-    
+
     &.completed {
       background-color: rgba(82, 196, 26, 0.1);
       border-color: #135200;
     }
   }
-  
+
   .batchItemName {
     .batchNumber {
       color: rgba(255, 255, 255, 0.45);
     }
   }
-  
+
   .batchItemInfo {
     color: rgba(255, 255, 255, 0.65);
   }
-} 
+}

@@ -22,8 +22,8 @@ export const exportScriptToPDF = (script: Script, projectName: string) => {
   const title = `${projectName} - 解说脚本`;
   doc.setProperties({
     title,
-    author: 'BlazeCut',
-    creator: 'BlazeCut Script Generator',
+    author: 'ClipFlow',
+    creator: 'ClipFlow Script Generator',
     subject: '视频解说脚本',
   });
   

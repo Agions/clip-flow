@@ -99,11 +99,11 @@ export const LLM_MODELS = {
     recommended: true
   },
 
-  // 阿里通义 - Qwen 3.5 (2026-01)
+  // 阿里通义 - Qwen 3.5 (原生多模态版) (2026-01)
   // API: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
   ALIBABA: {
     provider: 'alibaba',
-    name: 'Qwen 3.5',
+    name: 'Qwen 3.5 (原生多模态版)',
     modelId: 'qwen-3.5',
     version: '2026-01',
     maxTokens: 8192,

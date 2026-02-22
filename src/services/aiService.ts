@@ -226,7 +226,7 @@ export const aiService = {
       const response = await axios.post<QianwenResponse>(
         'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation',
         {
-          model: 'qwen-plus',
+          model: 'qwen3.5-plus',
           input: {
             prompt
           },
@@ -260,7 +260,7 @@ export const aiService = {
         {
           header: {
             app_id: options?.appId || '',
-            uid: 'blazecut_user'
+            uid: 'ClipFlow_user'
           },
           parameter: {
             chat: {
@@ -799,7 +799,7 @@ async function callOpenAI(prompt: string, apiKey: string): Promise<AIResponse> {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-5.2',
         messages: [
           {
             role: 'system',

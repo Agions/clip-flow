@@ -56,15 +56,17 @@ import {
   ClockCircleOutlined,
   DashboardOutlined,
   RobotOutlined,
-  SecurityScanOutlined
+  SecurityScanOutlined,
+  FolderOpenOutlined
 } from '@ant-design/icons';
+import { open } from '@tauri-apps/api/dialog';
 import styles from './Settings.module.less';
 import ThemeContext from '../context/ThemeContext';
 import AIModelSelector from '../components/AIModelSelector';
 import useTranslation from '../utils/i18n';
 
 // 手动定义ModelProvider类型
-type ModelProvider = 'openai' | 'anthropic' | 'google' | 'baidu' | 'iflytek' | 'alibaba' | 'tencent' | 'zhipu' | 'moonshot';
+type ModelProvider = 'openai' | 'anthropic' | 'google' | 'baidu' | 'iflytek' | 'alibaba' | 'tencent' | 'zhipu' | 'moonshot' | 'deepseek' | 'minimax';
 
 const { TabPane } = Tabs;
 const { Text, Title, Paragraph } = Typography;
@@ -116,6 +118,8 @@ const validateApiKey = async (type: string, apiKey: string): Promise<boolean> =>
       if (type === 'tencent' && apiKey.length < 20) valid = false;
       if (type === 'zhipu' && apiKey.length < 20) valid = false;
       if (type === 'moonshot' && apiKey.length < 20) valid = false;
+      if (type === 'deepseek' && !apiKey.startsWith('sk-')) valid = false;
+      if (type === 'minimax' && apiKey.length < 20) valid = false;
       
       resolve(valid);
     }, 1000);
@@ -124,21 +128,19 @@ const validateApiKey = async (type: string, apiKey: string): Promise<boolean> =>
 
 // 添加模型定义
 const models = [
-  { id: 'gpt-4o', name: 'GPT-4o', provider: 'openai' },
-  { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'openai' },
-  { id: 'claude-3-opus', name: 'Claude 3 Opus', provider: 'anthropic' },
-  { id: 'claude-3-sonnet', name: 'Claude 3 Sonnet', provider: 'anthropic' },
-  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', provider: 'google' },
-  // 添加国内大模型
-  { id: 'ernie-4.0', name: '文心一言4.0', provider: 'baidu' },
-  { id: 'spark-3.5', name: '讯飞星火3.5', provider: 'iflytek' },
-  { id: 'qwen-turbo', name: '通义千问', provider: 'alibaba' },
-  { id: 'qwen-plus', name: '通义千问Plus', provider: 'alibaba' },
-  { id: 'hunyuan', name: '腾讯混元', provider: 'tencent' },
-  { id: 'chatglm4-9b', name: 'ChatGLM4-9B', provider: 'zhipu' },
-  { id: 'chatglm4-32k', name: 'ChatGLM4-32K', provider: 'zhipu' },
-  { id: 'moonshot-v1-8k', name: 'Moonshot V1', provider: 'moonshot' },
-  { id: 'moonshot-v1-32k', name: 'Moonshot V1-32K', provider: 'moonshot' },
+  { id: 'gpt-5.3-codex', name: 'GPT-5.3 Codex', provider: 'openai' },
+  { id: 'claude-4.6-opus', name: 'Claude 4.6 Opus', provider: 'anthropic' },
+  { id: 'claude-4.6-sonnet', name: 'Claude 4.6 Sonnet', provider: 'anthropic' },
+  { id: 'gemini-3.1-pro', name: 'Gemini 3.1 Pro', provider: 'google' },
+  { id: 'deepseek-v4', name: 'DeepSeek v4', provider: 'deepseek' },
+  { id: 'ernie-5.0', name: '文心一言 5.0', provider: 'baidu' },
+  { id: 'spark-x2', name: '讯飞星火 X2', provider: 'iflytek' },
+  { id: 'qwen-3.5-max', name: '通义千问 3.5 Max', provider: 'alibaba' },
+  { id: 'hunyuan-ultra', name: '腾讯混元 Ultra', provider: 'tencent' },
+  { id: 'glm-5', name: 'GLM 5', provider: 'zhipu' },
+  { id: 'kimi-k2.5', name: 'Kimi k2.5', provider: 'moonshot' },
+  { id: 'abab6.5s', name: 'MiniMax 文本模型 (abab6.5s)', provider: 'minimax' },
+  { id: 'speech-01-turbo', name: 'MiniMax 语音模型 (Speech-01)', provider: 'minimax' },
 ];
 
 // 明确的声明Settings组件类型
@@ -205,12 +207,25 @@ const Settings: React.FC = () => {
     isTesting: false
   });
   
+  const [deepseekApiKey, setDeepseekApiKey] = useLocalStorage<ApiKeyState>('deepseek_api_key', {
+    value: '',
+    isValid: null,
+    isTesting: false
+  });
+  
+  const [minimaxApiKey, setMinimaxApiKey] = useLocalStorage<ApiKeyState>('minimax_api_key', {
+    value: '',
+    isValid: null,
+    isTesting: false
+  });
+  
   const [autoSave, setAutoSave] = useLocalStorage<boolean>('auto_save', true);
   const [autoUpdate, setAutoUpdate] = useLocalStorage<boolean>('auto_update', true);
   const [showLineNumbers, setShowLineNumbers] = useLocalStorage<boolean>('show_line_numbers', true);
   const [enableTranscode, setEnableTranscode] = useLocalStorage<boolean>('enable_transcode', false);
   const [highQualityExport, setHighQualityExport] = useLocalStorage<boolean>('high_quality_export', true);
   const [defaultModelIndex, setDefaultModelIndex] = useLocalStorage<number>('default_model_index', 0);
+  const [workspacePath, setWorkspacePath] = useLocalStorage<string>('workspace_path', '~/ClipFlow/Projects');
   
   // 添加缺失的状态变量声明
   const [apiTesting, setApiTesting] = useState<Record<string, boolean>>({
@@ -222,7 +237,9 @@ const Settings: React.FC = () => {
     alibaba: false,
     tencent: false,
     zhipu: false,
-    moonshot: false
+    moonshot: false,
+    deepseek: false,
+    minimax: false
   });
 
   const [apiKeyStatus, setApiKeyStatus] = useState<Record<string, boolean>>({});
@@ -391,6 +408,38 @@ const Settings: React.FC = () => {
           message.error(`验证过程中出错: ${(error as Error).message}`);
         }
         break;
+      case 'deepseek':
+        setDeepseekApiKey(prev => ({ ...prev, isTesting: true }));
+        try {
+          const isValid = await validateApiKey(type, apiKey);
+          setDeepseekApiKey(prev => ({ ...prev, isValid, isTesting: false }));
+          
+          if (isValid) {
+            message.success(`DeepSeek API密钥验证成功`);
+          } else {
+            message.error(`DeepSeek API密钥验证失败`);
+          }
+        } catch (error) {
+          setDeepseekApiKey(prev => ({ ...prev, isValid: false, isTesting: false }));
+          message.error(`验证过程中出错: ${(error as Error).message}`);
+        }
+        break;
+      case 'minimax':
+        setMinimaxApiKey(prev => ({ ...prev, isTesting: true }));
+        try {
+          const isValid = await validateApiKey(type, apiKey);
+          setMinimaxApiKey(prev => ({ ...prev, isValid, isTesting: false }));
+          
+          if (isValid) {
+            message.success(`MiniMax API密钥验证成功`);
+          } else {
+            message.error(`MiniMax API密钥验证失败`);
+          }
+        } catch (error) {
+          setMinimaxApiKey(prev => ({ ...prev, isValid: false, isTesting: false }));
+          message.error(`验证过程中出错: ${(error as Error).message}`);
+        }
+        break;
       default:
         return;
     }
@@ -404,6 +453,23 @@ const Settings: React.FC = () => {
   const handleModelChange = (modelId: string) => {
     setDefaultModelIndex(models.findIndex(model => model.id === modelId));
     message.success('默认模型已更新');
+  };
+
+  const handleSelectDirectory = async () => {
+    try {
+      const selected = await open({
+        directory: true,
+        multiple: false,
+        title: '选择项目所在目录'
+      });
+      if (selected && typeof selected === 'string') {
+        setWorkspacePath(selected);
+        message.success('项目目录已更新');
+      }
+    } catch (error) {
+      console.error('选择目录失败:', error);
+      message.error('选择目录失败');
+    }
   };
 
   const handleConfigureAPI = (provider: ModelProvider) => {
@@ -486,6 +552,24 @@ const Settings: React.FC = () => {
           const moonshotInput = document.getElementById('moonshot-api-key');
           if (moonshotInput) {
             (moonshotInput as HTMLInputElement).focus();
+          }
+        }, 300);
+        break;
+      case 'deepseek':
+        setActiveTab('api');
+        setTimeout(() => {
+          const deepseekInput = document.getElementById('deepseek-api-key');
+          if (deepseekInput) {
+            (deepseekInput as HTMLInputElement).focus();
+          }
+        }, 300);
+        break;
+      case 'minimax':
+        setActiveTab('api');
+        setTimeout(() => {
+          const minimaxInput = document.getElementById('minimax-api-key');
+          if (minimaxInput) {
+            (minimaxInput as HTMLInputElement).focus();
           }
         }, 300);
         break;
@@ -720,6 +804,13 @@ const Settings: React.FC = () => {
               <h3 className={styles.sectionTitle}>{t('settings.api.domesticServices')}</h3>
               
               {renderApiKeyInput(
+                'deepseek',
+                'DeepSeek API密钥',
+                '输入您的DeepSeek API密钥',
+                'sk-abcdefgh123456789...'
+              )}
+              
+              {renderApiKeyInput(
                 'baidu',
                 '百度文心一言 API密钥',
                 '输入您的文心一言API密钥',
@@ -750,15 +841,22 @@ const Settings: React.FC = () => {
               {renderApiKeyInput(
                 'zhipu',
                 '智谱ChatGLM API密钥',
-                '输入您的智谱ChatGLM API密钥',
-                'API密钥与密钥格式请参考智谱AI开放平台文档'
+                '输入您的智谱AI API密钥',
+                'API密钥详见智谱AI开放平台'
               )}
               
               {renderApiKeyInput(
                 'moonshot',
-                'Moonshot API密钥',
-                '输入您的Moonshot API密钥',
-                'API密钥与密钥格式请参考Moonshot AI文档'
+                'Moonshot AI API密钥',
+                '输入您的Moonshot (Kimi) API密钥',
+                'sk-xxxxxxxxxxxxx'
+              )}
+
+              {renderApiKeyInput(
+                'minimax',
+                'MiniMax API密钥',
+                '输入您的MiniMax API密钥',
+                'API密钥详见MiniMax开放平台'
               )}
               
               <Alert
@@ -768,12 +866,14 @@ const Settings: React.FC = () => {
                     <li>OpenAI API密钥：<a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">https://platform.openai.com/api-keys</a></li>
                     <li>Anthropic API密钥：<a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer">https://console.anthropic.com/settings/keys</a></li>
                     <li>Google AI API密钥：<a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer">https://makersuite.google.com/app/apikey</a></li>
+                    <li>DeepSeek：<a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener noreferrer">DeepSeek 开放平台</a></li>
                     <li>百度文心一言：<a href="https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Dlkm79mnx" target="_blank" rel="noopener noreferrer">百度智能云文档</a></li>
                     <li>讯飞星火：<a href="https://www.xfyun.cn/doc/spark/General_guide.html" target="_blank" rel="noopener noreferrer">讯飞开放平台文档</a></li>
                     <li>阿里通义千问：<a href="https://help.aliyun.com/document_detail/2400396.html" target="_blank" rel="noopener noreferrer">阿里云文档</a></li>
                     <li>腾讯混元：<a href="https://cloud.tencent.com/document/product/1729" target="_blank" rel="noopener noreferrer">腾讯云文档</a></li>
                     <li>智谱ChatGLM：<a href="https://open.bigmodel.cn/dev/api" target="_blank" rel="noopener noreferrer">智谱AI开放平台</a></li>
                     <li>Moonshot AI：<a href="https://platform.moonshot.cn/docs" target="_blank" rel="noopener noreferrer">Moonshot平台文档</a></li>
+                    <li>MiniMax：<a href="https://platform.minimaxi.com/document" target="_blank" rel="noopener noreferrer">MiniMax开放平台文档</a></li>
                   </ul>
                 }
                 type="info"
@@ -798,6 +898,22 @@ const Settings: React.FC = () => {
                   <DatabaseOutlined />
                 )}
                 
+                <div className={styles.switchItem}>
+                  <div className={styles.settingRow}>
+                    <FolderOpenOutlined />
+                    <span className={styles.switchLabel}>项目所在目录</span>
+                    <Space>
+                      <Input 
+                        value={workspacePath} 
+                        onChange={(e) => setWorkspacePath(e.target.value)} 
+                        style={{ width: '250px' }} 
+                        placeholder="例如 ~/Documents/ClipFlow"
+                      />
+                      <Button onClick={handleSelectDirectory}>选择目录</Button>
+                    </Space>
+                  </div>
+                  <div className={styles.settingDescription}>配置此选项可修改项目存储的目录</div>
+                </div>
                 {renderSwitchItem(
                   t('settings.general.lineNumbers'),
                   t('settings.general.lineNumbersDesc'),

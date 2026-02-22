@@ -41,7 +41,7 @@ export const analyzeVideoContent = async (videoAnalysis: VideoAnalysis): Promise
     `;
     
     const response = await client.post('/chat/completions', {
-      model: 'gpt-4o',
+      model: 'gpt-5.2',
       messages: [
         { role: 'system', content: '你是一位专业的视频分析师和脚本撰写专家' },
         { role: 'user', content: prompt }
@@ -94,7 +94,7 @@ export const generateScript = async (
     `;
     
     const response = await client.post('/chat/completions', {
-      model: 'gpt-4o',
+      model: 'gpt-5.2',
       messages: [
         { role: 'system', content: '你是一位专业的视频脚本撰写专家，擅长生成引人入胜、精确的视频解说脚本。' },
         { role: 'user', content: prompt }
@@ -202,7 +202,7 @@ export const polishScript = async (script: Script, style: string): Promise<Scrip
     `;
     
     const response = await client.post('/chat/completions', {
-      model: 'gpt-4o',
+      model: 'gpt-5.2',
       messages: [
         { role: 'system', content: '你是一位专业的视频脚本优化专家，擅长改进脚本质量并保持原有结构。' },
         { role: 'user', content: prompt }

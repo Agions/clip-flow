@@ -38,7 +38,7 @@ export const AI_MODELS = {
     provider: '阿里云',
     description: '阿里云通义千问大模型',
     apiKeyFormat: 'API_KEY',
-    defaultModel: 'qwen-plus',
+    defaultModel: 'qwen3.5-plus',
     baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1'
   },
   baidu: {

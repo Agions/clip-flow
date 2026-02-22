@@ -75,7 +75,7 @@ export const deleteProjectFile = async (projectId: string): Promise<boolean> => 
 export const getProjectList = async (): Promise<any[]> => {
   try {
     const files = await invoke<string[]>('list_app_data_files', { 
-      directory: 'blazecut' 
+      directory: 'ClipFlow' 
     });
     
     const projects = [];

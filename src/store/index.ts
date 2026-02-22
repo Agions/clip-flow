@@ -1,58 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Project, AIModelType, AI_MODEL_INFO } from '@/types';
+import { Project, AIModelType } from '@/types';
 
 // 示例数据
-const sampleProjects: Project[] = [
-  {
-    id: '1',
-    name: '示例项目',
-    description: '这是一个示例项目，用于展示Tauri应用的功能',
-    videoUrl: '/videos/sample.mp4',
-    analysis: {
-      id: '1',
-      title: '示例视频分析',
-      duration: 120,
-      keyMoments: [
-        { timestamp: 10, description: '开场', importance: 5 },
-        { timestamp: 60, description: '高潮部分', importance: 8 }
-      ],
-      emotions: [
-        { timestamp: 15, type: '兴奋', intensity: 0.7 },
-        { timestamp: 45, type: '紧张', intensity: 0.5 }
-      ],
-      summary: '这是一个简短的示例视频，展示了一些基本场景和情感'
-    },
-    scripts: [
-      {
-        id: '1',
-        videoId: '1',
-        content: [
-          {
-            id: '1-1',
-            startTime: 0,
-            endTime: 10,
-            content: '欢迎来到我们的示例视频',
-            type: 'narration'
-          },
-          {
-            id: '1-2',
-            startTime: 11,
-            endTime: 20,
-            content: '这里是主要内容的展示部分',
-            type: 'description'
-          }
-        ],
-        createdAt: '2023-03-27T10:00:00Z',
-        updatedAt: '2023-03-27T10:30:00Z',
-        modelUsed: 'wenxin'
-      }
-    ],
-    createdAt: '2023-03-27T09:00:00Z',
-    updatedAt: '2023-03-27T11:00:00Z',
-    aiModel: AI_MODEL_INFO.wenxin
-  }
-];
+const sampleProjects: Project[] = [];
 
 interface AppState {
   projects: Project[];
@@ -86,15 +37,16 @@ export const useStore = create<AppState>()(
         spark: { enabled: false },
         chatglm: { enabled: false },
         doubao: { enabled: false },
-        deepseek: { enabled: false }
+        deepseek: { enabled: false },
+        minimax: { enabled: false }
       },
       setProjects: (projects) => set({ projects }),
       setCurrentProject: (project) => set({ currentProject: project }),
-      addProject: (project) => set((state) => ({ 
-        projects: [...state.projects, project] 
+      addProject: (project) => set((state) => ({
+        projects: [...state.projects, project]
       })),
       updateProject: (project) => set((state) => ({
-        projects: state.projects.map((p) => 
+        projects: state.projects.map((p) =>
           p.id === project.id ? project : p
         ),
         currentProject: state.currentProject?.id === project.id ? project : state.currentProject,
@@ -117,7 +69,7 @@ export const useStore = create<AppState>()(
       })),
     }),
     {
-      name: 'blazecut-storage',
+      name: 'ClipFlow-storage',
       partialize: (state) => ({
         projects: state.projects,
         aiModelsSettings: state.aiModelsSettings,

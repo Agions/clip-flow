@@ -190,7 +190,7 @@ export const AI_MODELS: AIModel[] = [
   },
   // 阿里模型
   {
-    id: 'qwen-max',
+    id: 'qwen3.5-max',
     name: 'Qwen Max',
     provider: 'alibaba',
     category: ['text', 'code', 'image'],
@@ -202,7 +202,7 @@ export const AI_MODELS: AIModel[] = [
     pricing: { input: 0.004, output: 0.012, unit: '1K tokens' }
   },
   {
-    id: 'qwen-plus',
+    id: 'qwen3.5-plus',
     name: 'Qwen Plus',
     provider: 'alibaba',
     category: ['text', 'code'],
@@ -252,10 +252,10 @@ export const AI_MODELS: AIModel[] = [
 
 // 模型推荐配置
 export const MODEL_RECOMMENDATIONS: Record<string, string[]> = {
-  script: ['gpt-5', 'claude-opus-4-6', 'qwen-max', 'gemini-3-pro'],
-  analysis: ['gemini-3-pro', 'gemini-3-flash', 'gpt-5', 'qwen-max'],
-  code: ['claude-sonnet-4-6', 'gpt-5-mini', 'qwen-plus', 'glm-5'],
-  fast: ['gpt-5-mini', 'gemini-3-flash', 'qwen-plus', 'ernie-speed']
+  script: ['gpt-5', 'claude-opus-4-6', 'qwen3.5-max', 'gemini-3-pro'],
+  analysis: ['gemini-3-pro', 'gemini-3-flash', 'gpt-5', 'qwen3.5-max'],
+  code: ['claude-sonnet-4-6', 'gpt-5-mini', 'qwen3.5-plus', 'glm-5'],
+  fast: ['gpt-5-mini', 'gemini-3-flash', 'qwen3.5-plus', 'ernie-speed']
 };
 
 // 获取模型配置

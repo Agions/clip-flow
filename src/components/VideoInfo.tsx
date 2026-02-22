@@ -6,7 +6,7 @@ import styles from './VideoInfo.module.less';
 interface VideoInfoProps {
   name: string;
   duration: number;
-  path: string;
+  path?: string;
   metadata?: {
     width?: number;
     height?: number;
@@ -34,7 +34,8 @@ const VideoInfo: React.FC<VideoInfoProps> = ({
   };
   
   // 格式化路径，只显示最后的文件名部分
-  const formatPath = (path: string): string => {
+  const formatPath = (path?: string): string => {
+    if (!path) return '未知路径';
     const parts = path.split(/[/\\]/);
     return parts[parts.length - 1];
   };

@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "BlazeCut",
+    "productName": "ClipFlow",
     "version": "0.1.0"
   },
   "tauri": {
@@ -19,7 +19,13 @@
         "readDir": true,
         "exists": true,
         "createDir": true,
-        "scope": ["$APPDATA/*", "$APPDATA/blazecut/*", "$APPCONFIG/*", "$TEMP/*", "$RESOURCE/*"]
+        "scope": [
+          "$APPDATA/*",
+          "$APPDATA/ClipFlow/*",
+          "$APPCONFIG/*",
+          "$TEMP/*",
+          "$RESOURCE/*"
+        ]
       },
       "path": {
         "all": true
@@ -52,7 +58,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.blazecut.dev",
+      "identifier": "com.ClipFlow.dev",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -78,7 +84,7 @@
     },
     "windows": [
       {
-        "title": "BlazeCut - 视频脚本编辑工具",
+        "title": "ClipFlow - 视频脚本编辑工具",
         "width": 1200,
         "height": 800,
         "minWidth": 800,

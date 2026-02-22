@@ -8,7 +8,7 @@ import { open as openExternal } from '@tauri-apps/api/shell';
 // 确保应用数据目录
 export const ensureAppDataDir = async (): Promise<void> => {
   try {
-    const appDir = 'blazecut';
+    const appDir = 'ClipFlow';
     
     // 先尝试使用Rust函数检查目录
     try {
@@ -72,7 +72,7 @@ export const saveProjectToFile = async (projectId: string, project: any): Promis
       throw new Error(`应用数据目录错误: ${err.message || '未知错误'}`);
     });
     
-    const projectPath = `blazecut/${projectId}.json`;
+    const projectPath = `ClipFlow/${projectId}.json`;
     console.log('正在保存项目文件:', projectPath);
     
     // 准备项目数据
@@ -171,7 +171,7 @@ export const saveProjectToFile = async (projectId: string, project: any): Promis
 // 读取项目数据
 export const loadProjectFromFile = async (projectId: string): Promise<any> => {
   try {
-    const projectPath = `blazecut/${projectId}.json`;
+    const projectPath = `ClipFlow/${projectId}.json`;
     const existsFile = await exists(projectPath, { dir: BaseDirectory.AppData });
     
     if (!existsFile) {
@@ -461,7 +461,7 @@ export const listProjects = async (): Promise<any[]> => {
     await ensureAppDataDir();
     
     // 通过 Tauri API 获取所有 .json 文件
-    const appDir = 'blazecut';
+    const appDir = 'ClipFlow';
     
     // 这里需要实现列出目录文件的逻辑，但 @tauri-apps/api/fs 没有直接的 readDir 函数
     // 使用 invoke 调用 Rust 端的自定义函数

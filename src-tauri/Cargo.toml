@@ -1,5 +1,5 @@
 [package]
-name = "blazecut"
+name = "ClipFlow"
 version = "0.1.0"
 description = "视频脚本编辑工具"
 authors = ["你的名字"]

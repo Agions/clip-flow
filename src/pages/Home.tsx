@@ -224,7 +224,7 @@ const Home = () => {
                   children: (
                     <div>
                       <Text strong>教学系列 EP03</Text>
-                      <div><Text type="secondary" style={{ fontSize: 12 }}>脚本生成完成 · Qwen 3.5</Text></div>
+                      <div><Text type="secondary" style={{ fontSize: 12 }}>脚本生成完成 · Qwen 3.5 (原生多模态版)</Text></div>
                       <Text type="secondary" style={{ fontSize: 11 }}>5 小时前</Text>
                     </div>
                   )
@@ -266,7 +266,7 @@ const Home = () => {
             <ThunderboltOutlined /> 支持的 AI 模型
           </Text>
           <Space size={6} wrap>
-            {['GPT-5.2', 'Claude Opus 4.6', 'Gemini 3', 'ERNIE 5.5', 'Qwen 3.5', 'GLM-5', 'Kimi k2', 'Spark X1'].map(m => (
+            {['GPT-5.2', 'Claude Opus 4.6', 'Gemini 3', 'ERNIE 5.5', 'Qwen 3.5 (原生多模态版)', 'GLM-5', 'Kimi k2', 'Spark X1'].map(m => (
               <Tag key={m} style={{ margin: 0, borderRadius: 4, fontSize: 11 }}>{m}</Tag>
             ))}
           </Space>

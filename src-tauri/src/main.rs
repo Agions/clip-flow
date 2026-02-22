@@ -143,7 +143,7 @@ fn extract_key_frames(path: String, count: u32) -> Result<Vec<String>, String> {
     let duration = metadata.duration;
     
     // 创建临时目录存放关键帧
-    let temp_dir = std::env::temp_dir().join("blazecut_keyframes");
+    let temp_dir = std::env::temp_dir().join("ClipFlow_keyframes");
     fs::create_dir_all(&temp_dir).map_err(|e| format!("创建临时目录失败: {}", e))?;
     
     // 计算均匀分布的帧位置
@@ -196,7 +196,7 @@ fn generate_thumbnail(path: String) -> Result<String, String> {
     }
     
     // 创建临时目录存放缩略图
-    let temp_dir = std::env::temp_dir().join("blazecut_thumbnails");
+    let temp_dir = std::env::temp_dir().join("ClipFlow_thumbnails");
     fs::create_dir_all(&temp_dir).map_err(|e| format!("创建临时目录失败: {}", e))?;
     
     // 生成随机文件名
@@ -232,7 +232,7 @@ fn check_app_data_directory() -> Result<String, String> {
         None => return Err("无法获取应用数据目录".into()),
     };
 
-    let app_dir = app_data_dir.join("blazecut");
+    let app_dir = app_data_dir.join("ClipFlow");
     
     // 确保目录存在
     if !app_dir.exists() {
@@ -252,7 +252,7 @@ fn save_project_file(project_id: String, content: String) -> Result<(), String> 
         None => return Err("无法获取应用数据目录".into()),
     };
 
-    let app_dir = app_data_dir.join("blazecut");
+    let app_dir = app_data_dir.join("ClipFlow");
     
     // 确保目录存在
     if !app_dir.exists() {
@@ -294,7 +294,7 @@ async fn cut_video(params: CutVideoParams, window: Window) -> Result<String, Str
     }
     
     // 创建临时文件夹
-    let temp_dir = std::env::temp_dir().join("blazecut_temp");
+    let temp_dir = std::env::temp_dir().join("ClipFlow_temp");
     fs::create_dir_all(&temp_dir).map_err(|e| format!("创建临时目录失败: {}", e))?;
     
     // 处理输出格式
@@ -544,7 +544,7 @@ async fn generate_preview(params: PreviewParams) -> Result<String, String> {
     }
     
     // 创建临时文件夹
-    let temp_dir = std::env::temp_dir().join("blazecut_preview");
+    let temp_dir = std::env::temp_dir().join("ClipFlow_preview");
     fs::create_dir_all(&temp_dir).map_err(|e| format!("创建临时目录失败: {}", e))?;
     
     // 生成随机文件名
@@ -631,7 +631,7 @@ fn clean_temp_file(params: CleanFileParams) -> Result<(), String> {
     println!("清理临时文件: {}", params.path);
     
     // 检查路径有效性
-    if !params.path.contains("temp") && !params.path.contains("blazecut") {
+    if !params.path.contains("temp") && !params.path.contains("ClipFlow") {
         return Err("无效的临时文件路径".into());
     }
     
@@ -692,7 +692,7 @@ fn delete_project_file(project_id: String) -> Result<(), String> {
         None => return Err("无法获取应用数据目录".into()),
     };
 
-    let file_path = app_data_dir.join("blazecut").join(format!("{}.json", project_id));
+    let file_path = app_data_dir.join("ClipFlow").join(format!("{}.json", project_id));
     
     // 检查文件是否存在
     if !file_path.exists() {
@@ -824,7 +824,7 @@ fn random_id() -> String {
 }
 
 fn main() {
-    println!("启动 BlazeCut 应用");
+    println!("启动 ClipFlow 应用");
     
     tauri::Builder::default()
         .setup(|_app| {

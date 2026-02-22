@@ -57,9 +57,9 @@ const MODEL_COSTS: Record<string, { input: number; output: number }> = {
   'ernie-speed': { input: 0.0001, output: 0.0001 },
 
   // 阿里
-  'qwen-max': { input: 0.002, output: 0.006 },
-  'qwen-plus': { input: 0.0008, output: 0.002 },
-  'qwen-turbo': { input: 0.0003, output: 0.0006 },
+  'qwen3.5-max': { input: 0.002, output: 0.006 },
+  'qwen3.5-plus': { input: 0.0008, output: 0.002 },
+  'qwen3.5-turbo': { input: 0.0003, output: 0.0006 },
 
   // 月之暗面
   'kimi-k2.5': { input: 0.001, output: 0.003 },
@@ -244,17 +244,17 @@ class CostService {
   ): { model: string; provider: string; estimatedCost: number } {
     const suggestions: Record<string, Array<{ model: string; provider: string; cost: number }>> = {
       simple: [
-        { model: 'qwen-turbo', provider: 'alibaba', cost: 0.0003 },
+        { model: 'qwen3.5-turbo', provider: 'alibaba', cost: 0.0003 },
         { model: 'ernie-speed', provider: 'baidu', cost: 0.0001 },
         { model: 'kimi-k2.5', provider: 'moonshot', cost: 0.001 }
       ],
       standard: [
-        { model: 'qwen-plus', provider: 'alibaba', cost: 0.0008 },
+        { model: 'qwen3.5-plus', provider: 'alibaba', cost: 0.0008 },
         { model: 'kimi-k2.5', provider: 'moonshot', cost: 0.001 },
         { model: 'glm-5', provider: 'zhipu', cost: 0.001 }
       ],
       complex: [
-        { model: 'qwen-max', provider: 'alibaba', cost: 0.002 },
+        { model: 'qwen3.5-max', provider: 'alibaba', cost: 0.002 },
         { model: 'gpt-5', provider: 'openai', cost: 0.005 },
         { model: 'claude-4-sonnet', provider: 'anthropic', cost: 0.003 }
       ],
@@ -313,7 +313,7 @@ class CostService {
     }
 
     // 检查高成本模型使用
-    const highCostModels = ['gpt-5', 'claude-4-opus', 'qwen-max'];
+    const highCostModels = ['gpt-5', 'claude-4-opus', 'qwen3.5-max'];
     for (const model of highCostModels) {
       if (stats.byModel[model] && stats.byModel[model] > totalCost * 0.3) {
         suggestions.push(`💡 ${model} 使用成本较高，建议评估是否可以降级到 Plus 或 Turbo 模型`);

@@ -109,7 +109,7 @@ const models: AIModel[] = [
     avatar: 'https://sf3-cn.feishucdn.com/obj/eden-cn/uphco_h47iazuq/iflytek-spark-prd-website/static/favicon.ico'
   },
   {
-    id: 'qwen-max',
+    id: 'qwen3.5-max',
     name: '通义千问',
     provider: 'alibaba',
     category: ['text', 'code', 'image'],

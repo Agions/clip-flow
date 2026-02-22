@@ -57,9 +57,9 @@ const AIAssistant: React.FC<AIAssistantProps> = () => {
   
   // AI模型选项
   const models = [
-    { id: 'gpt-4o', name: 'GPT-4o (通用)', provider: 'openai' },
-    { id: 'claude-3-opus', name: 'Claude 3 Opus (高精度)', provider: 'anthropic' },
-    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (多模态)', provider: 'google' },
+    { id: 'gpt-5.2', name: 'GPT-5.2 (通用)', provider: 'openai' },
+    { id: 'claude-4.6-opus', name: 'Claude 4.6 Opus (高精度)', provider: 'anthropic' },
+    { id: 'gemini-3.1-pro', name: 'Gemini 3.1 Pro (多模态)', provider: 'google' },
     { id: 'ernie-4.0', name: '文心一言 (中文优化)', provider: 'baidu' }
   ];
   
@@ -223,7 +223,7 @@ const AIAssistant: React.FC<AIAssistantProps> = () => {
             <div className={styles.chatInput}>
               <div className={styles.modelSelector}>
                 <Select
-                  defaultValue="gpt-4o"
+                  defaultValue="gpt-5.2"
                   style={{ width: '100%' }}
                   size="small"
                 >

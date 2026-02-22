@@ -14,21 +14,21 @@ interface Translations {
 const translations: Translations = {
   zh: {
     // 通用
-    'app.name': '短剧燃剪',
+    'app.name': 'ClipFlow',
     'app.save': '保存',
     'app.cancel': '取消',
     'app.confirm': '确认',
     'app.delete': '删除',
     'app.edit': '编辑',
     'app.add': '添加',
-    
+
     // 主题设置
     'theme.mode': '主题模式',
     'theme.light': '亮色',
     'theme.dark': '暗色',
     'theme.auto': '自动',
     'theme.toggle': '切换亮/暗色主题',
-    
+
     // 设置页面
     'settings.title': '设置',
     'settings.subtitle': '自定义您的应用程序设置和AI模型配置',
@@ -77,21 +77,21 @@ const translations: Translations = {
   },
   en: {
     // 通用
-    'app.name': 'BlazeCut',
+    'app.name': 'ClipFlow',
     'app.save': 'Save',
     'app.cancel': 'Cancel',
     'app.confirm': 'Confirm',
     'app.delete': 'Delete',
     'app.edit': 'Edit',
     'app.add': 'Add',
-    
+
     // 主题设置
     'theme.mode': 'Theme Mode',
     'theme.light': 'Light',
     'theme.dark': 'Dark',
     'theme.auto': 'Auto',
     'theme.toggle': 'Toggle Light/Dark Theme',
-    
+
     // 设置页面
     'settings.title': 'Settings',
     'settings.subtitle': 'Customize your application settings and AI model configuration',
@@ -190,67 +190,67 @@ export function useTranslation() {
   const [language, setLanguage] = useState<Language>(
     localStorage.getItem('app_language') as Language || defaultLanguage
   );
-  
+
   useEffect(() => {
     localStorage.setItem('app_language', language);
   }, [language]);
-  
+
   // 翻译函数
   const t = useCallback((key: string, params?: Record<string, string | number>): string => {
     let text = translations[language]?.[key] || key;
-    
+
     // 替换参数
     if (params) {
       Object.entries(params).forEach(([paramKey, paramValue]) => {
         text = text.replace(new RegExp(`{${paramKey}}`, 'g'), String(paramValue));
       });
     }
-    
+
     return text;
   }, [language]);
-  
+
   // 切换语言
   const changeLanguage = useCallback((newLang: Language) => {
     setLanguage(newLang);
   }, []);
-  
+
   // 格式化日期
   const formatDate = useCallback((date: Date | string | number): string => {
-    const dateObj = typeof date === 'string' || typeof date === 'number' 
-      ? new Date(date) 
+    const dateObj = typeof date === 'string' || typeof date === 'number'
+      ? new Date(date)
       : date;
-    
+
     return new Intl.DateTimeFormat(
-      language === 'zh' ? 'zh-CN' : 'en-US', 
+      language === 'zh' ? 'zh-CN' : 'en-US',
       dateFormatOptions[language]
     ).format(dateObj);
   }, [language]);
-  
+
   // 格式化数字
   const formatNumber = useCallback((num: number): string => {
     return new Intl.NumberFormat(
-      language === 'zh' ? 'zh-CN' : 'en-US', 
+      language === 'zh' ? 'zh-CN' : 'en-US',
       numberFormatOptions[language]
     ).format(num);
   }, [language]);
-  
+
   // 格式化文件大小
   const formatFileSize = useCallback((bytes: number): string => {
     if (bytes === 0) return '0 B';
-    
+
     const k = 1024;
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     const size = parseFloat((bytes / Math.pow(k, i)).toFixed(2));
-    
+
     return `${formatNumber(size)} ${fileSizeUnits[language][i]}`;
   }, [language, formatNumber]);
-  
+
   // 格式化时长
   const formatDuration = useCallback((seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
-    
+
     if (hours > 0) {
       return language === 'zh'
         ? `${hours}小时${minutes}分钟`
@@ -265,10 +265,10 @@ export function useTranslation() {
         : `${secs}s`;
     }
   }, [language]);
-  
-  return { 
-    t, 
-    language, 
+
+  return {
+    t,
+    language,
     changeLanguage,
     formatDate,
     formatNumber,

@@ -76,7 +76,7 @@ export interface AIModelSettings {
   apiVersion?: string;
 }
 
-export type AIModelType = 'wenxin' | 'qianwen' | 'spark' | 'chatglm' | 'doubao' | 'deepseek';
+export type AIModelType = 'wenxin' | 'qianwen' | 'spark' | 'chatglm' | 'doubao' | 'deepseek' | 'minimax';
 
 // 用于 Project.aiModel 的 AI_MODEL_INFO
 export const AI_MODEL_INFO: Record<AIModelType, AIModelConfig> = {
@@ -109,6 +109,11 @@ export const AI_MODEL_INFO: Record<AIModelType, AIModelConfig> = {
     key: 'deepseek',
     name: 'DeepSeek',
     provider: 'DeepSeek'
+  },
+  minimax: {
+    key: 'minimax',
+    name: 'MiniMax',
+    provider: 'SenseTouch'
   }
 };
 
@@ -154,6 +159,13 @@ export const AI_MODEL_INFO_UI: Record<AIModelType, AIModelInfo> = {
     provider: 'DeepSeek',
     description: '深度搜索推出的大语言模型，拥有强大的创作与思考能力。',
     icon: 'DeepSeekIcon',
+    apiKeyFormat: 'API_KEY'
+  },
+  minimax: {
+    name: 'MiniMax',
+    provider: 'SenseTouch',
+    description: 'MiniMax出品的多模态通用大模型，包括文本、语音及音乐等丰富能力。',
+    icon: 'MiniMaxIcon',
     apiKeyFormat: 'API_KEY'
   }
 };
