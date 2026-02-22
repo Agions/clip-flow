@@ -1,7 +1,7 @@
 {
   "name": "clip-flow",
   "private": true,
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "ClipFlow (电影工坊) - AI-powered video content creation platform for filmmakers and content creators",
   "author": "Agions <agions@example.com>",
   "license": "MIT",

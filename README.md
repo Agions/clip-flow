@@ -1,334 +1,318 @@
 ```
- ██████╗██╗     ██╗██████╗ ███████╗██╗      ██████╗ ██╗    ██╗
-██╔════╝██║     ██║██╔══██╗██╔════╝██║     ██╔═══██╗██║    ██║
-██║     ██║     ██║██████╔╝█████╗  ██║     ██║   ██║██║ █╗ ██║
-██║     ██║     ██║██╔═══╝ ██╔══╝  ██║     ██║   ██║██║███╗██║
-╚██████╗███████╗██║██║     ██║     ███████╗╚██████╔╝╚███╔███╔╝
- ╚═════╝╚══════╝╚═╝╚═╝     ╚═╝     ╚══════╝ ╚═════╝  ╚══╝╚══╝
+  ____ _ _       _____ _
+ / ___| (_)_ __ |  ___| | _____      __
+| |   | | | '_ \| |_  | |/ _ \ \ /\ / /
+| |___| | | |_) |  _| | | (_) \ V  V /
+ \____|_|_| .__/|_|   |_|\___/ \_/\_/
+           |_|
 ```
 
-# ClipFlow - AI 驱动的专业视频内容创作平台
+<p align="center">
+  <strong>ClipFlow — AI 驱动的专业视频内容创作平台</strong>
+</p>
 
-ClipFlow 是一款面向影视创作者和内容创作者的专业 AI 视频内容创作平台，提供智能脚本生成、视频分析和混剪功能。
-
-> 📄 **许可声明**: 本项目采用 **MIT License**，允许自由使用、修改和分发。详见 [LICENSE](./LICENSE)
-> 
-> 📝 **曾用名**: ReelForge → ClipFlow → ClipFlow (2026-02-19 更名)
-
----
-
-## 更新日志 (2026-02-17)
-
-### v1.1.0 - 工作流优化与唯一性保障
-
-#### 新增功能
-- ✅ **9步完整工作流**: 上传 → 分析 → 模板 → 生成 → 去重 → 唯一性 → 编辑 → 时间轴 → 导出
-- ✅ **8种去重变体**: 保守型/平衡型/激进型/创意型/学术型/口语型/诗意型/技术型
-- ✅ **自动去重**: 根据相似度自动选择变体策略，无需用户介入
-- ✅ **唯一性保障**: 内容指纹 + 历史对比 + 自动重写
-- ✅ **原创性检测**: 精确匹配/语义相似/模板检测/结构重复
-
-#### 模型更新 (2026年最新)
-- ✅ **百度 ERNIE 5.0** (2026-01)
-- ✅ **阿里 Qwen 3.5** (2026-01)
-- ✅ **月之暗面 Kimi 2.5** (2025-07)
-- ✅ **智谱 GLM-5** (2026-01)
-- ✅ **MiniMax M2.5** (2025-12)
-
-### v1.0.0 - 正式发布
-
-#### 核心功能
-- ✅ **AI 脚本生成**: 支持 8 大 AI 提供商，智能生成视频解说脚本
-- ✅ **视频分析**: 自动提取关键帧、场景检测、内容摘要
-- ✅ **视频混剪**: 可视化编辑器，支持转场效果和字幕
-- ✅ **项目管理**: 完整的项目生命周期管理
-- ✅ **多模型支持**: OpenAI, Anthropic, Google, 百度, 阿里, 智谱, 讯飞, 腾讯
-
-#### 技术特性
-- ✅ **React 18 + TypeScript**: 现代化前端架构
-- ✅ **Zustand 状态管理**: 轻量级、高性能状态管理
-- ✅ **Tauri 桌面应用**: 跨平台桌面应用支持
-- ✅ **Ant Design 5**: 企业级 UI 组件库
-- ✅ **模块化架构**: 核心层、服务层、组件层分离
+<p align="center">
+  <img src="https://img.shields.io/badge/version-2.0.0-blue.svg" alt="Version" />
+  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" />
+  <img src="https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/React-18-61dafb?logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/Tauri-2.0-ffc131?logo=tauri" alt="Tauri" />
+  <img src="https://img.shields.io/badge/Vite-4-646cff?logo=vite" alt="Vite" />
+</p>
 
 ---
 
-## 功能模块
+## 📖 简介
 
-### 1. AI 模型管理
-- **模型选择器**: 智能推荐最适合任务的 AI 模型
-- **成本估算**: 实时显示 API 调用成本
-- **多提供商支持** (2026年最新):
-  - OpenAI (GPT-5)
-  - Anthropic (Claude 4)
-  - 百度 (ERNIE 5.0)
-  - 阿里 (Qwen 3.5)
-  - 月之暗面 (Kimi k2.5)
-  - 智谱 (GLM-5)
-  - MiniMax (M2.5)
+**ClipFlow** 是一款面向影视创作者和内容创作者的专业 AI 视频内容创作平台，提供智能脚本生成、视频分析、自动混剪和原创性保障。通过 9 步智能工作流，从视频上传到成品导出全链路覆盖。
 
-### 2. 视频处理
-- **视频上传**: 拖拽上传，支持多种格式
-- **视频分析**: 自动提取关键帧和场景
-- **缩略图生成**: 智能生成视频预览图
-- **格式转换**: 支持 MP4, MOV, WebM, AVI 等格式
-- **导出设置**: 多种质量和分辨率选项
+> 📄 **许可声明**：本项目采用 [MIT License](./LICENSE)
+>
+> 📝 **更名历史**：ReelForge → **ClipFlow** (2026-02-19)
 
-### 3. 脚本生成
-- **智能生成**: 基于视频内容自动生成解说脚本
-- **风格定制**: 专业/轻松/幽默/情感/技术/营销
-- **语气调整**: 友好/权威/热情/平静/幽默
-- **长度控制**: 简短(1-3分钟)/适中(3-5分钟)/详细(5-10分钟)
-- **多语言**: 中文/英文
-- **实时预览**: 生成过程可视化
+### ✨ 核心优势
 
-### 4. 脚本编辑
-- **富文本编辑**: 支持格式化文本
-- **段落管理**: 添加/删除/调整段落
-- **时间轴同步**: 脚本与视频时间轴关联
-- **版本历史**: 自动保存编辑历史
-
-### 5. 视频混剪
-- **可视化编辑器**: 拖拽式剪辑界面
-- **转场效果**: 淡入淡出/交叉溶解/擦除/滑动/缩放
-- **字幕添加**: 自动生成和编辑字幕
-- **音频控制**: 音量调整和背景音乐
-- **导出预览**: 导出前预览效果
-
-### 6. 项目管理
-- **项目列表**: 网格/列表视图
-- **搜索过滤**: 按名称、状态、日期筛选
-- **导入导出**: JSON 格式项目数据
-- **自动保存**: 定时自动保存项目
-
-### 7. 用户设置
-- **API 配置**: 管理各平台 API 密钥
-- **偏好设置**: 主题/语言/自动保存等
-- **导出历史**: 查看导出记录
+- 🤖 **多模型 AI 脚本生成** — 8 大 AI 提供商、7 种脚本模板、6 种风格可选
+- 🎬 **智能视频分析** — 场景检测（颜色直方图 Chi-Square 算法）、关键帧提取、内容摘要
+- ✂️ **AI 智能剪辑** — 场景切换检测、静音移除、节奏调整、自动转场
+- 🔒 **原创性保障** — 内容指纹 + 语义去重 + 8种去重变体 + 唯一性检测
+- 💰 **成本追踪** — 实时 Token 用量和 API 调用成本统计
+- 🖥️ **跨平台** — 基于 Tauri 的桌面应用，支持 macOS / Windows / Linux
 
 ---
 
-## 技术栈
+## 🔄 9 步智能工作流
 
-### 前端
-- **框架**: React 18 + TypeScript 5
-- **构建**: Vite 4
-- **UI 库**: Ant Design 5
-- **状态管理**: Zustand 4
-- **动画**: Framer Motion
-- **样式**: Less + CSS Modules
+```
+上传 → 分析 → 模板选择 → 脚本生成 → 去重优化 → 唯一性保障 → 脚本编辑 → 时间轴 → 导出
+```
 
-### 桌面应用
-- **框架**: Tauri (Rust)
-- **API**: 原生系统 API 调用
+### Step 1: 📤 视频上传
 
-### 工具链
-- **代码规范**: ESLint + Prettier
-- **类型检查**: TypeScript
-- **包管理**: pnpm/npm
+| 项目 | 说明 |
+|------|------|
+| **输入** | 视频文件（MP4 / MOV / WebM / AVI，最大 1GB） |
+| **处理** | 拖拽上传、格式检测、元数据提取（时长/分辨率/帧率） |
+| **输出** | `VideoInfo` — 标准化视频信息对象，关联到项目 |
+
+### Step 2: 🔍 智能分析
+
+| 项目 | 说明 |
+|------|------|
+| **输入** | `VideoInfo` 视频数据 |
+| **处理** | 颜色直方图差异场景检测、关键帧采样、对象识别、情绪检测 |
+| **输出** | `VideoAnalysis` — 场景列表、关键帧、分析摘要 |
+
+### Step 3: 📋 模板选择
+
+| 项目 | 说明 |
+|------|------|
+| **输入** | `VideoAnalysis` + 用户偏好 |
+| **处理** | 基于视频特征自动推荐模板；支持手动选择 |
+| **输出** | `ScriptTemplate` — 7种模板之一（专业/轻松/幽默/情感/技术/营销/叙事） |
+| **模板** | 每个模板包含结构定义（开场/主体/转场/结尾/CTA）、字数指导、写作提示 |
+
+### Step 4: 📝 AI 脚本生成
+
+| 项目 | 说明 |
+|------|------|
+| **输入** | 模板结构 + 视频分析 + 风格/语气/长度参数 |
+| **处理** | 按模板段落逐段调用 AI 生成解说词；场景信息注入 Prompt |
+| **输出** | `ScriptData` — 完整脚本（含分段、元数据、字数统计、预估时长） |
+
+### Step 5: 🔄 去重优化
+
+| 项目 | 说明 |
+|------|------|
+| **输入** | 生成的脚本 |
+| **处理** | 三重检测（精确匹配 / 语义相似 / 模板重复）+ 8种变体策略自动修复 |
+| **输出** | 去重后脚本 + 原创性报告（评分/重复项/修改建议） |
+| **变体** | 保守型 / 平衡型 / 激进型 / 创意型 / 学术型 / 口语型 / 诗意型 / 技术型 |
+
+### Step 6: 🔒 唯一性保障
+
+| 项目 | 说明 |
+|------|------|
+| **输入** | 去重后脚本 |
+| **处理** | 内容指纹生成 → 历史库对比 → 相似度超标自动重写（最多3轮） → 随机性注入 |
+| **输出** | 唯一性验证通过的脚本 + 唯一性报告 |
+
+### Step 7: ✏️ 脚本编辑
+
+| 项目 | 说明 |
+|------|------|
+| **输入** | 唯一性验证后的脚本 |
+| **处理** | 富文本编辑器；段落增删调整；版本历史；实时字数/时长统计 |
+| **输出** | 最终脚本，保存到项目 |
+
+### Step 8: 🎬 时间轴编辑
+
+| 项目 | 说明 |
+|------|------|
+| **输入** | 脚本 + 视频分析 + 视频信息 |
+| **处理** | 自动匹配脚本段落与视频场景；三轨时间轴（视频/音频/字幕）；转场设置 |
+| **输出** | `TimelineData` — 多轨时间轴（含片段、时间码、转场效果） |
+
+### Step 9: 📦 导出发布
+
+| 项目 | 说明 |
+|------|------|
+| **输入** | 时间轴 + 导出设置 |
+| **处理** | 自动生成 SRT 字幕 → FFmpeg 编码（libx264 + AAC）→ 导出记录保存 |
+| **输出** | 成品视频（MP4 / WebM / MOV，720p ~ 4K） |
 
 ---
 
-## 项目结构
+## 🏗️ 技术架构
+
+```mermaid
+graph TB
+    subgraph Frontend["前端 (React 18 + TypeScript)"]
+        Pages[页面层<br/>Home / Workflow / Editor / VideoStudio / Settings]
+        Components[组件层<br/>ModelSelector / VideoUploader / ScriptGenerator]
+        Hooks[Hooks 层<br/>useWorkflow / useModel / useProject / useVideo]
+    end
+
+    subgraph Core["核心层"]
+        Services[服务层]
+        Store[状态管理 Zustand]
+        Templates[模板系统<br/>7种脚本模板 / 8种去重变体]
+    end
+
+    subgraph Services_Detail["服务详情"]
+        AI[AI Service<br/>多模型调度]
+        Video[Video Service<br/>分析/剪辑/导出]
+        AIClip[AI Clip Service<br/>智能剪辑]
+        Editor[Editor Service<br/>富文本编辑]
+        Vision[Vision Service<br/>视觉识别]
+        Unique[Uniqueness Service<br/>唯一性保障]
+        Cost[Cost Service<br/>成本追踪]
+        Workflow[Workflow Service<br/>9步流水线]
+    end
+
+    subgraph External["外部服务"]
+        LLM[LLM APIs<br/>OpenAI / Anthropic / Google<br/>百度 / 阿里 / 智谱 / 讯飞 / 腾讯]
+        FFmpeg[FFmpeg<br/>视频编码/转码]
+    end
+
+    Pages --> Components --> Hooks --> Services
+    Services --> Services_Detail
+    Services_Detail --> External
+    Store --> Hooks
+    Templates --> Workflow
+```
+
+---
+
+## 🤖 支持的 AI 模型 (2026)
+
+| 提供商 | 模型 | 特点 |
+|--------|------|------|
+| **OpenAI** | GPT-5 | 综合能力最强 |
+| **Anthropic** | Claude 4 | 长文本理解优秀 |
+| **Google** | Gemini 2 | 多模态能力 |
+| **百度** | ERNIE 5.0 | 中文优化 |
+| **阿里** | Qwen 3.5 | 性价比高 |
+| **智谱** | GLM-5 | 多模态理解 |
+| **讯飞** | Spark 5.0 | 语音集成 |
+| **MiniMax** | M2.5 | 长文本生成 |
+
+---
+
+## 🚀 快速开始
+
+### 环境要求
+
+- Node.js ≥ 18
+- pnpm 或 npm
+- Rust（Tauri 桌面端需要）
+- FFmpeg（视频导出需要）
+
+### 安装运行
+
+```bash
+# 克隆项目
+git clone https://github.com/Agions/clip-flow.git
+cd clip-flow
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+
+# 构建生产版本
+npm run build
+
+# 启动 Tauri 桌面应用
+npm run tauri dev
+```
+
+### 配置 API 密钥
+
+进入 **设置页面** → API 配置，添加至少一个 AI 模型的密钥即可开始使用。
+
+---
+
+## 📁 项目结构
 
 ```
 src/
-├── core/                    # 核心层
-│   ├── api/                 # API 客户端
-│   │   └── client.ts        # 统一 HTTP 请求
-│   ├── config/              # 配置文件
-│   │   ├── app.config.ts    # 应用配置
-│   │   └── models.config.ts # AI 模型配置
-│   ├── constants/           # 常量定义
-│   │   └── index.ts         # 所有常量（含 LLM_MODELS）
-│   ├── hooks/               # 自定义 Hooks
-│   │   ├── useModel.ts      # 模型管理
-│   │   ├── useProject.ts    # 项目管理
-│   │   ├── useVideo.ts      # 视频处理
-│   │   └── useWorkflow.ts   # 工作流管理
-│   ├── services/            # 服务层
-│   │   ├── ai.service.ts    # AI 服务
-│   │   ├── video.service.ts # 视频服务
-│   │   ├── storage.service.ts # 存储服务
-│   │   ├── vision.service.ts  # 视觉识别
-│   │   ├── workflow.service.ts # 工作流服务
-│   │   └── uniqueness.service.ts # 唯一性保障
-│   ├── store/               # 状态管理
-│   │   ├── app.store.ts     # 应用状态
-│   │   ├── project.store.ts # 项目状态
-│   │   └── user.store.ts    # 用户状态
-│   ├── templates/           # 模板库
-│   │   ├── script.templates.ts   # 脚本模板（7种）
-│   │   ├── dedup.templates.ts    # 去重模板
-│   │   └── dedup.variants.ts     # 去重变体（8种）
-│   ├── types/               # 类型定义
-│   │   └── index.ts         # 所有类型
-│   └── utils/               # 工具函数
-│       ├── index.ts         # 通用工具
-│       └── hooks.ts         # 通用 Hooks
-├── components/              # 组件层
-│   ├── common/              # 通用组件
-│   │   ├── Button/          # 按钮组件
-│   │   └── Card/            # 卡片组件
-│   ├── ModelSelector/       # 模型选择器
-│   ├── VideoUploader/       # 视频上传
-│   ├── ScriptGenerator/     # 脚本生成器
-│   └── ScriptGeneratorV2/   # 优化版本
-├── pages/                   # 页面层
-│   ├── Home/                # 首页
-│   ├── Dashboard/           # 仪表盘
-│   ├── Projects/            # 项目列表
-│   ├── ProjectDetail/       # 项目详情
-│   ├── Editor/              # 编辑器
-│   ├── VideoStudio/         # 视频工作室
-│   ├── Workflow/            # 工作流（9步）
-│   └── Settings/            # 设置
-├── layouts/                 # 布局组件
-├── assets/                  # 静态资源
-└── App.tsx                  # 应用入口
+├── core/                           # 核心层
+│   ├── api/client.ts               # 统一 HTTP 客户端
+│   ├── config/
+│   │   ├── app.config.ts           # 应用配置
+│   │   └── models.config.ts        # AI 模型配置
+│   ├── constants/index.ts          # 全局常量
+│   ├── hooks/                      # 业务 Hooks
+│   │   ├── useWorkflow.ts          # 工作流管理
+│   │   ├── useModel.ts             # 模型选择
+│   │   ├── useProject.ts           # 项目管理
+│   │   └── useVideo.ts             # 视频操作
+│   ├── services/                   # 业务服务
+│   │   ├── workflow.service.ts     # ⭐ 9步工作流引擎
+│   │   ├── ai.service.ts           # 多模型 AI 调度
+│   │   ├── video.service.ts        # 视频处理 / FFmpeg
+│   │   ├── aiClip.service.ts       # AI 智能剪辑
+│   │   ├── vision.service.ts       # 视觉识别
+│   │   ├── editor.service.ts       # 编辑器服务
+│   │   ├── uniqueness.service.ts   # 唯一性保障
+│   │   ├── cost.service.ts         # 成本追踪
+│   │   ├── storage.service.ts      # 本地存储
+│   │   ├── base.service.ts         # 服务基类
+│   │   └── index.ts                # 统一导出
+│   ├── stores/                     # Zustand 状态管理
+│   ├── templates/                  # 模板系统
+│   │   ├── script.templates.ts     # 7种脚本模板
+│   │   ├── dedup.templates.ts      # 去重模板
+│   │   └── dedup.variants.ts       # 8种去重变体
+│   ├── types/index.ts              # 全局类型
+│   └── utils/                      # 工具函数
+├── components/                     # UI 组件
+│   ├── business/                   # 业务组件
+│   │   ├── ModelSelector/          # 模型选择器
+│   │   ├── VideoUploader/          # 视频上传
+│   │   ├── ScriptGenerator/        # 脚本生成器
+│   │   ├── ScriptGeneratorV2/      # 优化版脚本生成
+│   │   └── editor/                 # 编辑器组件
+│   ├── common/                     # 通用组件
+│   └── layout/                     # 布局组件
+├── pages/                          # 页面
+│   ├── Home/                       # 首页
+│   ├── Workflow/index.tsx          # ⭐ 9步工作流页面
+│   ├── Editor/                     # 编辑器
+│   ├── VideoStudio/                # 视频工作室
+│   └── Settings/                   # 设置
+├── context/                        # React Context
+├── layouts/                        # 布局
+└── utils/                          # 工具（i18n等）
+
+src-tauri/                          # Tauri 桌面端 (Rust)
+docs/                               # 项目文档
 ```
 
 ---
 
-## 快速开始
+## 🛠️ 技术栈
 
-### 环境要求
-- Node.js 18+
-- pnpm 8+ 或 npm 9+
-- Rust 环境（Tauri 开发）
-
-### 安装依赖
-
-```bash
-# 使用 pnpm（推荐）
-pnpm install
-
-# 或使用 npm
-npm install
-```
-
-### 开发模式
-
-```bash
-# 启动前端开发服务器
-pnpm dev
-
-# 启动 Tauri 应用
-pnpm tauri dev
-```
-
-### 构建应用
-
-```bash
-# 构建生产版本
-pnpm tauri build
-```
+| 类别 | 技术 |
+|------|------|
+| **前端框架** | React 18 + TypeScript 5 |
+| **构建工具** | Vite 4 |
+| **UI 组件** | Ant Design 5 |
+| **状态管理** | Zustand 4 |
+| **动画** | Framer Motion |
+| **样式** | Less + CSS Modules |
+| **桌面端** | Tauri (Rust) |
+| **视频处理** | FFmpeg (via Tauri Shell) |
+| **代码规范** | ESLint + Prettier |
 
 ---
 
-## 开发指南
+## 🤝 参与贡献
 
-### 代码规范
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'feat: add amazing feature'`)
+4. 推送分支 (`git push origin feature/amazing-feature`)
+5. 提交 Pull Request
 
-- **组件命名**: PascalCase (如 `VideoUploader`)
-- **方法命名**: camelCase (如 `handleUpload`)
-- **常量命名**: UPPER_SNAKE_CASE (如 `SCRIPT_STYLES`)
-- **文件组织**: 按功能模块分组
+### 提交规范
 
-### 状态管理
-
-使用 Zustand 进行状态管理：
-
-```typescript
-// 使用应用状态
-const { theme, setTheme } = useAppStore();
-
-// 使用项目状态
-const { projects, createProject } = useProjectStore();
-
-// 使用用户状态
-const { preferences, updatePreferences } = useUserStore();
-```
-
-### 服务调用
-
-```typescript
-// AI 服务
-import { aiService } from '@/core/services';
-const script = await aiService.generateScript(model, settings, params);
-
-// 视频服务
-import { videoService } from '@/core/services';
-const info = await videoService.getVideoInfo(file);
-
-// 存储服务
-import { storageService } from '@/core/services';
-storageService.projects.save(project);
-```
-
-### 常量使用
-
-```typescript
-import {
-  SCRIPT_STYLES,
-  TONE_OPTIONS,
-  SCRIPT_LENGTHS,
-  TARGET_AUDIENCES
-} from '@/core/constants';
-```
+- `feat:` 新功能
+- `fix:` 修复
+- `docs:` 文档
+- `refactor:` 重构
+- `perf:` 性能优化
 
 ---
 
-## 路线图
+## 📄 许可证
 
-### ✅ v1.0.0 (已完成)
-- [x] AI 脚本生成
-- [x] 视频分析
-- [x] 视频混剪
-- [x] 多模型支持
-- [x] 项目管理
-
-### 🚀 v1.1.0 (进行中)
-- [x] AI 智能剪辑助手
-- [x] 场景/静音/关键帧检测
-- [x] 批量视频处理
-- [ ] 云端同步
-- [ ] 团队协作
-- [ ] 更多 AI 提供商
-
-### 📅 v1.2.0 (计划中)
-- [ ] 语音合成 (TTS)
-- [ ] 自动字幕生成
-- [ ] 视频模板市场
-- [ ] 插件系统
-- [ ] 移动端适配
-
-### 🔮 v2.0.0 (远期)
-- [ ] AI 视频生成
-- [ ] 实时协作编辑
-- [ ] 原生移动端应用
-- [ ] 云服务版本
+本项目采用 [MIT License](./LICENSE) 开源。
 
 ---
 
-## 贡献指南
-
-1. Fork 项目
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建 Pull Request
-
----
-
-## 许可证
-
-MIT License - 详见 [LICENSE](LICENSE) 文件
-
----
-
-## 支持
-
-如有问题或建议，欢迎提交 Issue 或联系开发者。
-
-**GitHub**: https://github.com/Agions/clip-flow
+<p align="center">
+  <strong>ClipFlow</strong> — 让创作更高效
+</p>

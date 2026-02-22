@@ -37,7 +37,7 @@ import {
   PlayCircleOutlined,
   DeleteOutlined,
   MergeCellsOutlined,
-  MagicOutlined,
+  ExperimentOutlined,
   SettingOutlined,
   ThunderboltOutlined,
   ClockCircleOutlined,
@@ -372,7 +372,7 @@ export const AIClipAssistant: React.FC<AIClipAssistantProps> = ({
             开始分析
           </Button>
           <Button
-            icon={<MagicOutlined />}
+            icon={<ExperimentOutlined />}
             onClick={handleSmartClip}
             loading={analyzing}
             size="large"
@@ -537,7 +537,7 @@ export const AIClipAssistant: React.FC<AIClipAssistantProps> = ({
                       {suggestion.type === 'trim' && <ScissorOutlined />}
                       {suggestion.type === 'merge' && <MergeCellsOutlined />}
                       {suggestion.type === 'cut' && <DeleteOutlined />}
-                      {suggestion.type === 'effect' && <MagicOutlined />}
+                      {suggestion.type === 'effect' && <ExperimentOutlined />}
                     </div>
                   }
                   title={

@@ -867,7 +867,7 @@ ${section.tips?.map((tip: string) => `- ${tip}`).join('\n')}
     this.updateState({ step: 'preview', progress: 90 });
 
     // 生成预览 URL
-    const previewUrl = `reelforge://preview/${this.state.data.projectId}`;
+    const previewUrl = `clipflow://preview/${this.state.data.projectId}`;
 
     this.updateState({ progress: 95 });
 
@@ -876,31 +876,90 @@ ${section.tips?.map((tip: string) => `- ${tip}`).join('\n')}
 
   /**
    * 步骤8: 导出
+   * 输入: 时间轴数据 + 导出设置
+   * 输出: 最终视频文件路径
    */
   async stepExport(settings: ExportSettings): Promise<string> {
     this.updateState({ step: 'export', progress: 95 });
 
-    // 模拟导出过程
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const { projectId, videoInfo, timeline, editedScript } = this.state.data;
+    if (!videoInfo || !timeline) throw new Error('缺少视频或时间轴数据');
 
-    const exportPath = `exports/${this.state.data.projectId}_${Date.now()}.${settings.format}`;
+    // 生成字幕文件（SRT格式）
+    let subtitlePath: string | undefined;
+    if (settings.includeSubtitles !== false && editedScript) {
+      const srtContent = this.generateSRT(editedScript, timeline);
+      subtitlePath = `exports/${projectId}_subtitle.srt`;
+      // 保存 SRT 内容（通过 storage service）
+      storageService.save(`srt-${projectId}`, srtContent);
+    }
+
+    // 构建输出路径
+    const outputPath = `exports/${projectId}_${Date.now()}.${settings.format || 'mp4'}`;
+
+    // 调用视频服务导出
+    const exportedPath = await videoService.exportVideo(
+      videoInfo.path,
+      outputPath,
+      {
+        format: settings.format,
+        quality: settings.quality,
+        resolution: settings.resolution,
+        includeSubtitles: !!subtitlePath,
+        subtitlePath
+      }
+    );
 
     // 保存导出记录
     const exportRecord = {
       id: `export_${Date.now()}`,
-      projectId: this.state.data.projectId!,
-      format: settings.format,
-      quality: settings.quality,
-      filePath: exportPath,
+      projectId: projectId!,
+      format: settings.format || 'mp4',
+      quality: settings.quality || 'high',
+      resolution: settings.resolution || '1080p',
+      filePath: exportedPath,
       fileSize: 0,
+      timeline: {
+        totalClips: timeline.tracks.reduce((sum, t) => sum + t.clips.length, 0),
+        duration: timeline.duration
+      },
       createdAt: new Date().toISOString()
     };
 
     storageService.exportHistory.add(exportRecord);
 
     this.updateState({ progress: 100, status: 'completed' });
+    return exportedPath;
+  }
 
-    return exportPath;
+  /**
+   * 生成 SRT 字幕文件内容
+   */
+  private generateSRT(script: ScriptData, timeline: TimelineData): string {
+    const subtitleTrack = timeline.tracks.find(t => t.type === 'subtitle');
+    if (!subtitleTrack || subtitleTrack.clips.length === 0) {
+      // 没有字幕轨道时，按段落均分时间
+      return script.segments.map((seg, idx) => {
+        const segDuration = timeline.duration / script.segments.length;
+        const start = idx * segDuration;
+        const end = (idx + 1) * segDuration;
+        return `${idx + 1}\n${this.formatSRTTime(start)} --> ${this.formatSRTTime(end)}\n${seg.content}\n`;
+      }).join('\n');
+    }
+
+    return subtitleTrack.clips.map((clip, idx) => {
+      const segment = script.segments.find(s => s.id === clip.scriptSegmentId);
+      const text = segment?.content || '';
+      return `${idx + 1}\n${this.formatSRTTime(clip.startTime)} --> ${this.formatSRTTime(clip.endTime)}\n${text}\n`;
+    }).join('\n');
+  }
+
+  private formatSRTTime(seconds: number): string {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    const ms = Math.floor((seconds % 1) * 1000);
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')},${ms.toString().padStart(3, '0')}`;
   }
 
   /**
