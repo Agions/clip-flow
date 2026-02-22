@@ -18,6 +18,7 @@ import VideoInfo from '@/components/VideoInfo';
 import ScriptEditor from '@/components/ScriptEditor';
 import VideoProcessingController from '@/components/VideoProcessingController';
 import VideoAnalyzer from '@/components/VideoAnalyzer';
+import SubtitleExtractor from '@/components/SubtitleExtractor';
 import { saveProjectToFile, getApiKey } from '@/services/tauriService';
 import { generateScriptWithModel, parseGeneratedScript } from '@/services/aiService';
 import styles from './ProjectDetail.module.less';
@@ -181,11 +182,17 @@ const ProjectDetail: React.FC = () => {
         );
       case 'subtitle':
         return (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className={styles.placeholderSection}>
-             <div className={styles.iconWrapper}><FormOutlined /></div>
-             <Title level={3}>智能字幕提取引擎</Title>
-             <Text>正在准备的高级语音识别(ASR)模块，一键提取视频内所有对话并转换精准时间轴。</Text>
-             <Button type="primary" size="large" className={styles.premiumBtn} onClick={() => message.info('功能开发中，敬请期待！')}>即将推出</Button>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+            <SubtitleExtractor 
+              projectId={project.id}
+              videoUrl={project.videoUrl}
+              onExtracted={(subtitles) => {
+                const updated = { ...project, extractedSubtitles: subtitles };
+                setProject(updated);
+                updateProject(updated);
+                saveProjectToFile(updated.id, updated);
+              }}
+            />
           </motion.div>
         );
       case 'script':

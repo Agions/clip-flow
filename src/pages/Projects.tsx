@@ -2,75 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Typography, Button, Card, Row, Col, Input, Select,
-  Table, Tag, Space, Modal, message, Empty, Tabs,
-  Dropdown, Avatar, Progress, Tooltip
+  Table, Tag, Space, Modal, message, Empty, Dropdown, Progress, Tooltip
 } from 'antd';
+import { useStore } from '@/store/index';
+import { Project } from '@/types';
 import {
   PlusOutlined,
-  SearchOutlined,
   EditOutlined,
   DeleteOutlined,
   PlayCircleOutlined,
   EllipsisOutlined,
   AppstoreOutlined,
   UnorderedListOutlined,
-  FilterOutlined,
-  SortAscendingOutlined,
   VideoCameraOutlined,
-  ClockCircleOutlined,
-  CheckCircleOutlined,
   ExportOutlined,
   FolderOpenOutlined,
 } from '@ant-design/icons';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 const { Search } = Input;
-
-interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-  status: 'draft' | 'processing' | 'completed' | 'exported';
-  thumbnail?: string;
-  videoCount: number;
-  scriptCount: number;
-  progress: number;
-}
 
 const ProjectManager: React.FC = () => {
   const navigate = useNavigate();
+  const { projects: storeProjects, deleteProject } = useStore();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
+    // Simulate initial loading time for smooth UI transition
     const timer = setTimeout(() => {
-      setProjects([
-        {
-          id: '1', name: '产品宣传视频', description: '公司新产品 Q1 宣传短视频',
-          createdAt: '2026-02-20T08:00:00Z', updatedAt: '2026-02-22T10:30:00Z',
-          status: 'completed', videoCount: 3, scriptCount: 2, progress: 100,
-        },
-        {
-          id: '2', name: '社交媒体短视频', description: '抖音和小红书推广内容系列',
-          createdAt: '2026-02-18T12:00:00Z', updatedAt: '2026-02-21T09:15:00Z',
-          status: 'processing', videoCount: 5, scriptCount: 3, progress: 65,
-        },
-        {
-          id: '3', name: '教学视频 EP01-05', description: '软件使用教程系列',
-          createdAt: '2026-02-15T15:45:00Z', updatedAt: '2026-02-19T14:20:00Z',
-          status: 'draft', videoCount: 1, scriptCount: 0, progress: 15,
-        },
-        {
-          id: '4', name: '品牌故事片', description: '企业品牌故事宣传片',
-          createdAt: '2026-02-10T09:00:00Z', updatedAt: '2026-02-12T16:00:00Z',
-          status: 'exported', videoCount: 2, scriptCount: 1, progress: 100,
-        },
-      ]);
       setLoading(false);
     }, 500);
     return () => clearTimeout(timer);
@@ -83,9 +45,32 @@ const ProjectManager: React.FC = () => {
     exported: { color: 'purple', text: '已导出' },
   };
 
-  const filteredProjects = projects.filter(p => {
+  // Helper to map a Project from useStore to UI fields structure
+  const getProjectUIStatus = (project: Project) => {
+    let scriptCount = project.scripts?.length || 0;
+    let videoCount = project.videoUrl ? 1 : 0;
+    let status = 'draft';
+    let progress = 0;
+
+    if (project.analysis) {
+      progress = 50;
+      status = 'processing';
+      if (scriptCount > 0) {
+        progress = 100;
+        status = 'completed';
+      }
+    } else if (project.videoUrl) {
+      progress = 25;
+      status = 'draft';
+    }
+
+    return { scriptCount, videoCount, status, progress };
+  };
+
+  const filteredProjects = storeProjects.filter(p => {
     const matchSearch = !searchText || p.name.includes(searchText) || p.description?.includes(searchText);
-    const matchStatus = statusFilter === 'all' || p.status === statusFilter;
+    const uiStatus = getProjectUIStatus(p).status;
+    const matchStatus = statusFilter === 'all' || uiStatus === statusFilter;
     return matchSearch && matchStatus;
   });
 
@@ -97,7 +82,7 @@ const ProjectManager: React.FC = () => {
       okType: 'danger',
       cancelText: '取消',
       onOk: () => {
-        setProjects(prev => prev.filter(p => p.id !== id));
+        deleteProject(id);
         message.success('项目已删除');
       }
     });
@@ -150,47 +135,50 @@ const ProjectManager: React.FC = () => {
         </Card>
       </Col>
 
-      {filteredProjects.map(project => (
-        <Col xs={24} sm={12} md={8} lg={6} key={project.id}>
-          <Card
-            hoverable
-            onClick={() => navigate(`/project/${project.id}`)}
-            style={{ borderRadius: 10, height: 220, overflow: 'hidden' }}
-            styles={{ body: { padding: 16, height: '100%', display: 'flex', flexDirection: 'column' } }}
-          >
-            {/* 顶部：状态和菜单 */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-              <Tag color={statusConfig[project.status].color} style={{ margin: 0, borderRadius: 4 }}>
-                {statusConfig[project.status].text}
-              </Tag>
-              <Dropdown menu={projectActions(project)} trigger={['click']}>
-                <Button type="text" icon={<EllipsisOutlined />} size="small" onClick={e => e.stopPropagation()} />
-              </Dropdown>
-            </div>
+      {filteredProjects.map(project => {
+        const uiStatus = getProjectUIStatus(project);
+        return (
+          <Col xs={24} sm={12} md={8} lg={6} key={project.id}>
+            <Card
+              hoverable
+              onClick={() => navigate(`/project/${project.id}`)}
+              style={{ borderRadius: 10, height: 220, overflow: 'hidden' }}
+              styles={{ body: { padding: 16, height: '100%', display: 'flex', flexDirection: 'column' } }}
+            >
+              {/* 顶部：状态和菜单 */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                <Tag color={statusConfig[uiStatus.status]?.color || 'default'} style={{ margin: 0, borderRadius: 4 }}>
+                  {statusConfig[uiStatus.status]?.text || '草稿'}
+                </Tag>
+                <Dropdown menu={projectActions(project)} trigger={['click']}>
+                  <Button type="text" icon={<EllipsisOutlined />} size="small" onClick={e => e.stopPropagation()} />
+                </Dropdown>
+              </div>
 
-            {/* 项目名 */}
-            <Title level={5} ellipsis style={{ margin: '0 0 4px' }}>{project.name}</Title>
-            <Text type="secondary" ellipsis style={{ fontSize: 12, marginBottom: 12 }}>{project.description}</Text>
+              {/* 项目名 */}
+              <Title level={5} ellipsis style={{ margin: '0 0 4px' }}>{project.name}</Title>
+              <Text type="secondary" ellipsis style={{ fontSize: 12, marginBottom: 12 }}>{project.description}</Text>
 
-            {/* 进度 */}
-            <Progress 
-              percent={project.progress} 
-              size="small" 
-              strokeColor={{ from: '#667eea', to: '#764ba2' }}
-              style={{ marginBottom: 8 }}
-            />
+              {/* 进度 */}
+              <Progress 
+                percent={uiStatus.progress} 
+                size="small" 
+                strokeColor={{ from: '#667eea', to: '#764ba2' }}
+                style={{ marginBottom: 8 }}
+              />
 
-            {/* 底部信息 */}
-            <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Space size={12}>
-                <Tooltip title="视频数"><Text type="secondary" style={{ fontSize: 11 }}><VideoCameraOutlined /> {project.videoCount}</Text></Tooltip>
-                <Tooltip title="脚本数"><Text type="secondary" style={{ fontSize: 11 }}><FolderOpenOutlined /> {project.scriptCount}</Text></Tooltip>
-              </Space>
-              <Text type="secondary" style={{ fontSize: 11 }}>{formatDate(project.updatedAt)}</Text>
-            </div>
-          </Card>
-        </Col>
-      ))}
+              {/* 底部信息 */}
+              <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Space size={12}>
+                  <Tooltip title="视频数"><Text type="secondary" style={{ fontSize: 11 }}><VideoCameraOutlined /> {uiStatus.videoCount}</Text></Tooltip>
+                  <Tooltip title="脚本数"><Text type="secondary" style={{ fontSize: 11 }}><FolderOpenOutlined /> {uiStatus.scriptCount}</Text></Tooltip>
+                </Space>
+                <Text type="secondary" style={{ fontSize: 11 }}>{formatDate(project.updatedAt)}</Text>
+              </div>
+            </Card>
+          </Col>
+        );
+      })}
 
       {filteredProjects.length === 0 && !loading && (
         <Col span={24}>
@@ -221,29 +209,35 @@ const ProjectManager: React.FC = () => {
         },
         {
           title: '状态',
-          dataIndex: 'status',
+          key: 'status',
           width: 100,
-          render: (status: string) => (
-            <Tag color={statusConfig[status].color}>{statusConfig[status].text}</Tag>
-          )
+          render: (_: any, record: Project) => {
+            const uiStatus = getProjectUIStatus(record).status;
+            return <Tag color={statusConfig[uiStatus]?.color}>{statusConfig[uiStatus]?.text}</Tag>;
+          }
         },
         {
           title: '进度',
-          dataIndex: 'progress',
+          key: 'progress',
           width: 140,
-          render: (progress: number) => (
-            <Progress percent={progress} size="small" strokeColor={{ from: '#667eea', to: '#764ba2' }} />
-          )
+          render: (_: any, record: Project) => {
+            const progress = getProjectUIStatus(record).progress;
+            return <Progress percent={progress} size="small" strokeColor={{ from: '#667eea', to: '#764ba2' }} />;
+          }
         },
         {
           title: '素材',
+          key: 'assets',
           width: 100,
-          render: (_: any, record: Project) => (
-            <Space size={8}>
-              <Text type="secondary" style={{ fontSize: 12 }}><VideoCameraOutlined /> {record.videoCount}</Text>
-              <Text type="secondary" style={{ fontSize: 12 }}><FolderOpenOutlined /> {record.scriptCount}</Text>
-            </Space>
-          )
+          render: (_: any, record: Project) => {
+            const uiStatus = getProjectUIStatus(record);
+            return (
+              <Space size={8}>
+                <Text type="secondary" style={{ fontSize: 12 }}><VideoCameraOutlined /> {uiStatus.videoCount}</Text>
+                <Text type="secondary" style={{ fontSize: 12 }}><FolderOpenOutlined /> {uiStatus.scriptCount}</Text>
+              </Space>
+            );
+          }
         },
         {
           title: '更新时间',
@@ -331,11 +325,11 @@ const ProjectManager: React.FC = () => {
       {/* 项目统计 */}
       <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
         {[
-          { label: '全部', value: projects.length, color: '#667eea', filter: 'all' },
-          { label: '草稿', value: projects.filter(p => p.status === 'draft').length, color: '#8c8c8c', filter: 'draft' },
-          { label: '制作中', value: projects.filter(p => p.status === 'processing').length, color: '#1890ff', filter: 'processing' },
-          { label: '已完成', value: projects.filter(p => p.status === 'completed').length, color: '#52c41a', filter: 'completed' },
-          { label: '已导出', value: projects.filter(p => p.status === 'exported').length, color: '#722ed1', filter: 'exported' },
+          { label: '全部', value: storeProjects.length, color: '#667eea', filter: 'all' },
+          { label: '草稿', value: storeProjects.filter(p => getProjectUIStatus(p).status === 'draft').length, color: '#8c8c8c', filter: 'draft' },
+          { label: '制作中', value: storeProjects.filter(p => getProjectUIStatus(p).status === 'processing').length, color: '#1890ff', filter: 'processing' },
+          { label: '已完成', value: storeProjects.filter(p => getProjectUIStatus(p).status === 'completed').length, color: '#52c41a', filter: 'completed' },
+          { label: '已导出', value: storeProjects.filter(p => getProjectUIStatus(p).status === 'exported').length, color: '#722ed1', filter: 'exported' },
         ].map((item, idx) => (
           <Col key={idx}>
             <Tag
