@@ -84,8 +84,8 @@ export const MODEL_PROVIDERS: Record<ModelProvider, {
 export const AI_MODELS: AIModel[] = [
   // OpenAI 模型
   {
-    id: 'gpt-4o',
-    name: 'GPT-4o',
+    id: 'gpt-5',
+    name: 'GPT-5',
     provider: 'openai',
     category: ['text', 'code', 'image'],
     description: '最强大的多模态大模型，支持文本、代码和图像分析',
@@ -96,8 +96,8 @@ export const AI_MODELS: AIModel[] = [
     pricing: { input: 0.005, output: 0.015, unit: '1K tokens' }
   },
   {
-    id: 'gpt-4o-mini',
-    name: 'GPT-4o Mini',
+    id: 'gpt-5-mini',
+    name: 'GPT-5 Mini',
     provider: 'openai',
     category: ['text', 'code', 'image'],
     description: '高性价比的多模态模型，适合日常任务',
@@ -252,10 +252,10 @@ export const AI_MODELS: AIModel[] = [
 
 // 模型推荐配置
 export const MODEL_RECOMMENDATIONS: Record<string, string[]> = {
-  script: ['gpt-4o', 'claude-3-opus', 'qwen-max', 'gemini-1.5-pro'],
-  analysis: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gpt-4o', 'qwen-max'],
-  code: ['claude-3-sonnet', 'gpt-4o-mini', 'qwen-plus', 'glm-4'],
-  fast: ['gpt-4o-mini', 'gemini-1.5-flash', 'qwen-plus', 'ernie-speed']
+  script: ['gpt-5', 'claude-3-opus', 'qwen-max', 'gemini-1.5-pro'],
+  analysis: ['gemini-1.5-pro', 'gemini-1.5-flash', 'gpt-5', 'qwen-max'],
+  code: ['claude-3-sonnet', 'gpt-5-mini', 'qwen-plus', 'glm-4'],
+  fast: ['gpt-5-mini', 'gemini-1.5-flash', 'qwen-plus', 'ernie-speed']
 };
 
 // 获取模型配置

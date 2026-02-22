@@ -36,8 +36,8 @@ interface AIModelSelectorProps {
 
 const models: AIModel[] = [
   {
-    id: 'gpt-4o',
-    name: 'GPT-4o',
+    id: 'gpt-5',
+    name: 'GPT-5',
     provider: 'openai',
     category: ['text', 'code', 'image'],
     description: '最强大的多模态大模型，支持文本、代码和图像分析',
